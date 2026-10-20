@@ -8,6 +8,8 @@ const DEFAULT_SETTINGS = {
   midterm: '',   // YYYY-MM-DD
   final: '',     // YYYY-MM-DD
   retention: 0.9,
+  introSeen: false, // How it works shown once on first visit
+  showPad: true,    // scratchpad under recall prompts
 };
 
 function todayKey(d = new Date()) {
@@ -25,6 +27,7 @@ export function loadState() {
     log: s.log || [],              // {id, rating, at}
     newIntroduced: s.newIntroduced || {}, // dayKey -> [cardIds]
     sessions: s.sessions || {},    // dayKey -> count of reviews
+    snapshots: s.snapshots || {},  // dayKey -> {stages, avgInterval}, written at wrap-up
   };
 }
 
@@ -46,6 +49,7 @@ export function importState(text) {
     log: s.log || [],
     newIntroduced: s.newIntroduced || {},
     sessions: s.sessions || {},
+    snapshots: s.snapshots || {},
   };
 }
 
