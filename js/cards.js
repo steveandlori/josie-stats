@@ -7,7 +7,8 @@
 // Fields: id, topic, name, priority, latex (display formula, may be several lines),
 //   meaning (what it computes), when (condition / when to use), symbols [[sym, meaning]],
 //   cloze (formula with a \blank{} where the learner fills in), why (optional explanation),
-//   note (optional, e.g. a correction to the notes), source {name, url}.
+//   note (optional, e.g. a correction to the notes), source {name, url},
+//   links [{name, url}] = free explainers (Seeing Theory, StatQuest, OpenStax); every URL verified live 2026-10-20.
 
 export const TOPICS = {
   describe: 'Describing data',
@@ -30,6 +31,7 @@ export const FORMULAS = [
     symbols: [['\\mu', 'population mean'], ['\\bar{x}', 'sample mean'], ['\\sum x', 'sum of all values'], ['N', 'population size'], ['n', 'sample size']],
     cloze: '\\bar{x} = \\frac{\\blank{\\;\\sum x\\;}}{n}',
     source: { name: 'NIST e-Handbook 1.3.5.1', url: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm' },
+    links: [{ name: 'Seeing Theory: Expectation', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section2' }, { name: 'StatQuest: Mean, variance and standard deviation', url: 'https://www.youtube.com/watch?v=SzZ6GpcfoQY' }],
   },
   {
     id: 'range', topic: 'describe', name: 'Range', priority: 'C',
@@ -39,6 +41,7 @@ export const FORMULAS = [
     symbols: [['\\text{max}', 'largest data value'], ['\\text{min}', 'smallest data value']],
     cloze: '\\text{Range} = \\blank{\\text{max}} - \\text{min}',
     source: { name: 'NIST e-Handbook 1.3.5.6', url: 'https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm' },
+    links: [{ name: 'OpenStax: Measures of the spread of the data', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-7-measures-of-the-spread-of-the-data' }],
   },
   {
     id: 'popsd', topic: 'describe', name: 'Population variance and standard deviation', priority: 'M',
@@ -51,6 +54,7 @@ export const FORMULAS = [
     why: 'Deviations from the mean always sum to zero, so they are squared first. The square root undoes the squaring so σ is in the same units as the data.',
     note: 'Your notes have this garbled as "σ=√N∑(x−μ)2". The N is the divisor, inside the square root.',
     source: { name: 'OpenStax 2.7', url: OS + '2-7-measures-of-the-spread-of-the-data' },
+    links: [{ name: 'Seeing Theory: Variance', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section3' }, { name: 'StatQuest: Mean, variance and standard deviation', url: 'https://www.youtube.com/watch?v=SzZ6GpcfoQY' }],
   },
   {
     id: 'sampsd', topic: 'describe', name: 'Sample variance and standard deviation', priority: 'M',
@@ -62,6 +66,7 @@ export const FORMULAS = [
     whyQ: 'Why does the sample standard deviation divide by n − 1 instead of n?',
     why: 'The sample mean x̄ sits closer to the sample values than the true μ does, so squared deviations from x̄ come out a little too small. Dividing by n − 1 instead of n corrects that bias.',
     source: { name: 'OpenStax 2.7', url: OS + '2-7-measures-of-the-spread-of-the-data' },
+    links: [{ name: 'StatQuest: Why dividing by N underestimates the variance', url: 'https://www.youtube.com/watch?v=sHRBg6BhKjI' }, { name: 'OpenStax: Measures of the spread of the data', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-7-measures-of-the-spread-of-the-data' }],
   },
   {
     id: 'iqr', topic: 'describe', name: 'Five-number summary and IQR', priority: 'M',
@@ -71,6 +76,7 @@ export const FORMULAS = [
     symbols: [['Q_1', '25th percentile (first quartile)'], ['\\text{median}', '50th percentile (Q₂)'], ['Q_3', '75th percentile (third quartile)'], ['\\text{IQR}', 'interquartile range']],
     cloze: '\\text{IQR} = \\blank{Q_3} - Q_1',
     source: { name: 'OpenStax Ch. 2 review', url: OS + '2-chapter-review' },
+    links: [{ name: 'OpenStax: Measures of the location of the data', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-3-measures-of-the-location-of-the-data' }, { name: 'StatQuest: Quantiles and percentiles', url: 'https://www.youtube.com/watch?v=IFKQLDmRK0Y' }],
   },
   {
     id: 'fence', topic: 'describe', name: 'Outlier rule (1.5 × IQR fences)', priority: 'C',
@@ -80,6 +86,7 @@ export const FORMULAS = [
     symbols: [['Q_1,\\,Q_3', 'first and third quartiles'], ['\\text{IQR}', 'Q₃ − Q₁']],
     cloze: '\\text{outlier if } x > Q_3 + \\blank{1.5}\\,\\text{IQR}',
     source: { name: 'OpenStax Ch. 2 review', url: OS + '2-chapter-review' },
+    links: [{ name: 'OpenStax: Measures of the location of the data (outliers)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-3-measures-of-the-location-of-the-data' }, { name: 'OpenStax: Box plots', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-4-box-plots' }],
   },
   {
     id: 'relfreq', topic: 'describe', name: 'Relative and cumulative relative frequency', priority: 'M',
@@ -89,6 +96,7 @@ export const FORMULAS = [
     symbols: [['f', 'frequency (count) for a value or class'], ['n', 'total number of data values'], ['\\text{CRF}', 'add up all RFs through this row']],
     cloze: '\\text{RF} = \\frac{f}{\\blank{n}}',
     source: { name: 'OpenStax 1.3', url: OS + '1-3-frequency-frequency-tables-and-levels-of-measurement' },
+    links: [{ name: 'OpenStax: Frequency and frequency tables', url: 'https://openstax.org/books/introductory-statistics-2e/pages/1-3-frequency-frequency-tables-and-levels-of-measurement' }],
   },
   {
     id: 'moments', topic: 'describe', name: 'The four moments', priority: 'M',
@@ -98,6 +106,7 @@ export const FORMULAS = [
     symbols: [['\\text{skewness}', 'which way the tail points (positive = right tail)'], ['\\text{kurtosis}', 'how heavy the tails are']],
     cloze: '3^{\\text{rd}} \\text{ moment: } \\blank{\\text{skewness}}',
     source: { name: 'MathWorld — Moment', url: 'https://mathworld.wolfram.com/Moment.html' },
+    links: [{ name: 'OpenStax: Skewness and the mean, median, and mode', url: 'https://openstax.org/books/introductory-statistics-2e/pages/2-6-skewness-and-the-mean-median-and-mode' }, { name: 'Seeing Theory: Expectation and variance', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section2' }],
   },
 
   // ───────────────────────── Probability ─────────────────────────
@@ -109,6 +118,7 @@ export const FORMULAS = [
     symbols: [['N(A)', 'number of outcomes in event A'], ['N(S)', 'number of outcomes in the sample space S']],
     cloze: 'P(A) = \\frac{N(A)}{\\blank{N(S)}}',
     source: { name: 'Penn State STAT 414 §2.4', url: PSU + 'stat414/lesson/2/2.4' },
+    links: [{ name: 'Seeing Theory: Chance events', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section1' }, { name: 'OpenStax: Probability terminology', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology' }],
   },
   {
     id: 'empirical', topic: 'prob', name: 'Experimental (empirical) probability', priority: 'M',
@@ -118,6 +128,7 @@ export const FORMULAS = [
     symbols: [['\\text{trials}', 'number of times the experiment was run']],
     cloze: 'P(A) \\approx \\frac{\\text{times } A \\text{ occurred}}{\\blank{\\text{number of trials}}}',
     source: { name: 'Penn State STAT 414 §2.4', url: PSU + 'stat414/lesson/2/2.4' },
+    links: [{ name: 'Seeing Theory: Chance events', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section1' }, { name: 'OpenStax: Probability terminology', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology' }],
   },
   {
     id: 'axioms', topic: 'prob', name: 'The three axioms of probability', priority: 'C',
@@ -127,6 +138,7 @@ export const FORMULAS = [
     symbols: [['S', 'the sample space (all possible outcomes)'], ['A \\cup B', '“A or B”'], ['\\text{mutually exclusive}', 'A and B share no outcomes']],
     cloze: 'P(S) = \\blank{1}',
     source: { name: 'Penn State STAT 414 §2.5', url: PSU + 'stat414/lesson/2/2.5' },
+    links: [{ name: 'Seeing Theory: Set theory', url: 'https://seeing-theory.brown.edu/compound-probability/index.html#section1' }, { name: 'OpenStax: Probability terminology', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology' }],
   },
   {
     id: 'complement', topic: 'prob', name: 'Complement rule', priority: 'C',
@@ -136,6 +148,7 @@ export const FORMULAS = [
     symbols: [['A\'', 'the complement of A (every outcome not in A)']],
     cloze: 'P(A\') = \\blank{1} - P(A)',
     source: { name: 'OpenStax 3.1', url: OS + '3-1-terminology' },
+    links: [{ name: 'Seeing Theory: Set theory', url: 'https://seeing-theory.brown.edu/compound-probability/index.html#section1' }, { name: 'OpenStax: Probability terminology', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology' }],
   },
   {
     id: 'addition', topic: 'prob', name: 'Addition rule (“or”)', priority: 'C',
@@ -145,6 +158,7 @@ export const FORMULAS = [
     symbols: [['A \\cup B', 'A or B (or both)'], ['A \\cap B', 'A and B']],
     cloze: 'P(A \\cup B) = P(A) + P(B) - \\blank{P(A \\cap B)}',
     source: { name: 'OpenStax Ch. 3 formula review', url: OS + '3-formula-review' },
+    links: [{ name: 'OpenStax: Two basic rules of probability', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability' }, { name: 'Seeing Theory: Set theory', url: 'https://seeing-theory.brown.edu/compound-probability/index.html#section1' }],
   },
   {
     id: 'multiplication', topic: 'prob', name: 'Multiplication law (“and”)', priority: 'M',
@@ -154,6 +168,7 @@ export const FORMULAS = [
     symbols: [['A \\cap B', 'A and B'], ['P(B \\mid A)', 'probability of B given that A happened']],
     cloze: '\\text{dependent: } P(A \\cap B) = P(A)\\,\\blank{P(B \\mid A)}',
     source: { name: 'OpenStax Ch. 3 formula review', url: OS + '3-formula-review' },
+    links: [{ name: 'OpenStax: Two basic rules of probability', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability' }, { name: 'OpenStax: Independent and mutually exclusive events', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-2-independent-and-mutually-exclusive-events' }],
   },
   {
     id: 'conditional', topic: 'prob', name: 'Conditional probability', priority: 'M',
@@ -163,6 +178,7 @@ export const FORMULAS = [
     symbols: [['P(A \\mid B)', 'probability of A given B'], ['P(A \\cap B)', 'probability both happen'], ['P(B)', 'must be greater than 0']],
     cloze: 'P(A \\mid B) = \\frac{P(A \\cap B)}{\\blank{P(B)}}',
     source: { name: 'OpenStax Ch. 3 formula review', url: OS + '3-formula-review' },
+    links: [{ name: 'Seeing Theory: Conditional probability', url: 'https://seeing-theory.brown.edu/compound-probability/index.html#section3' }, { name: 'StatQuest: Conditional probabilities', url: 'https://www.youtube.com/watch?v=_IgyaD7vOOA' }],
   },
   {
     id: 'perm', topic: 'prob', name: 'Permutations and combinations', priority: 'C',
@@ -172,6 +188,7 @@ export const FORMULAS = [
     symbols: [['n', 'number of distinct objects'], ['r', 'how many are picked'], ['n!', 'n × (n−1) × … × 1, and 0! = 1']],
     cloze: '{}_nC_r = \\frac{n!}{\\blank{r!}\\,(n-r)!}',
     source: { name: 'Penn State STAT 414 §3.2', url: PSU + 'stat414/lesson/3/3.2' },
+    links: [{ name: 'Seeing Theory: Counting', url: 'https://seeing-theory.brown.edu/compound-probability/index.html#section2' }],
   },
   {
     id: 'lln', topic: 'prob', name: 'Law of large numbers', priority: 'M',
@@ -181,6 +198,7 @@ export const FORMULAS = [
     symbols: [['\\bar{x}', 'sample mean'], ['\\mu', 'population mean / expected value'], ['n', 'number of trials or sample size']],
     cloze: '\\bar{x} \\to \\blank{\\mu} \\quad \\text{as } n \\to \\infty',
     source: { name: 'OpenStax 7.3', url: OS + '7-3-using-the-central-limit-theorem' },
+    links: [{ name: 'Seeing Theory: Chance events', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section1' }, { name: 'OpenStax: Probability terminology (law of large numbers)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology' }],
   },
 
   // ───────────────────────── Distributions ─────────────────────────
@@ -192,6 +210,7 @@ export const FORMULAS = [
     symbols: [['x', 'each possible value of X'], ['P(x)', 'its probability'], ['E[X]', 'expected value (the mean of X)']],
     cloze: '\\mu = E[X] = \\sum x\\,\\blank{P(x)}',
     source: { name: 'OpenStax 4.2', url: OS + '4-2-mean-or-expected-value-and-standard-deviation' },
+    links: [{ name: 'Seeing Theory: Expectation', url: 'https://seeing-theory.brown.edu/basic-probability/index.html#section2' }, { name: 'StatQuest: Expected values', url: 'https://www.youtube.com/watch?v=KLs_7b7SKi4' }],
   },
   {
     id: 'binomial', topic: 'dist', name: 'Binomial distribution', priority: 'C',
@@ -201,6 +220,7 @@ export const FORMULAS = [
     symbols: [['n', 'number of trials'], ['k', 'number of successes'], ['p', 'probability of success on one trial'], ['\\binom{n}{k}', 'ways to place k successes among n trials']],
     cloze: 'P(X=k) = \\binom{n}{k} p^k \\blank{(1-p)^{n-k}}',
     source: { name: 'OpenStax Ch. 4 formula review', url: OS + '4-formula-review' },
+    links: [{ name: 'StatQuest: Binomial distribution', url: 'https://www.youtube.com/watch?v=J8jNoF-K8E8' }, { name: 'OpenStax: Binomial distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/4-3-binomial-distribution' }],
   },
   {
     id: 'geometric', topic: 'dist', name: 'Geometric distribution', priority: 'S',
@@ -210,6 +230,7 @@ export const FORMULAS = [
     symbols: [['p', 'probability of success on each trial'], ['k', 'the trial on which the first success happens']],
     cloze: 'P(X=k) = \\blank{(1-p)^{k-1}}\\, p',
     source: { name: 'OpenStax Ch. 4 formula review', url: OS + '4-formula-review' },
+    links: [{ name: 'OpenStax: Geometric distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/4-4-geometric-distribution' }],
   },
   {
     id: 'poisson', topic: 'dist', name: 'Poisson distribution', priority: 'C',
@@ -219,6 +240,7 @@ export const FORMULAS = [
     symbols: [['\\lambda', 'average number of events in the interval (OpenStax writes μ)'], ['k', 'observed count'], ['e', '≈ 2.718']],
     cloze: 'P(X=k) = \\frac{e^{-\\lambda}\\,\\blank{\\lambda^k}}{k!}',
     source: { name: 'OpenStax Ch. 4 formula review', url: OS + '4-formula-review' },
+    links: [{ name: 'OpenStax: Poisson distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/4-6-poisson-distribution' }],
   },
   {
     id: 'exponential', topic: 'dist', name: 'Exponential distribution', priority: 'S',
@@ -228,6 +250,7 @@ export const FORMULAS = [
     symbols: [['\\lambda', 'rate of events per unit time (OpenStax writes m)'], ['1/\\lambda', 'the mean waiting time']],
     cloze: 'P(X \\le x) = 1 - \\blank{e^{-\\lambda x}}',
     source: { name: 'OpenStax Ch. 5 formula review', url: OS + '5-formula-review' },
+    links: [{ name: 'OpenStax: The exponential distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/5-3-the-exponential-distribution' }],
   },
   {
     id: 'uniform', topic: 'dist', name: 'Continuous uniform distribution', priority: 'S',
@@ -237,6 +260,7 @@ export const FORMULAS = [
     symbols: [['a', 'minimum'], ['b', 'maximum'], ['f(x)', 'the (constant) height of the density']],
     cloze: 'f(x) = \\frac{1}{\\blank{b-a}}',
     source: { name: 'OpenStax Ch. 5 formula review', url: OS + '5-formula-review' },
+    links: [{ name: 'OpenStax: The uniform distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/5-2-the-uniform-distribution' }],
   },
   {
     id: 'normalpdf', topic: 'dist', name: 'Normal (Gaussian) density', priority: 'S',
@@ -246,6 +270,7 @@ export const FORMULAS = [
     symbols: [['\\mu', 'mean (center of the bell)'], ['\\sigma', 'standard deviation (width)'], ['e,\\,\\pi', 'the constants 2.718… and 3.1416…']],
     cloze: 'f(x) = \\frac{1}{\\blank{\\sigma\\sqrt{2\\pi}}}\\, e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}',
     source: { name: 'OpenStax Appendix F', url: OS + 'f-mathematical-phrases-symbols-and-formulas' },
+    links: [{ name: 'StatQuest: The normal distribution', url: 'https://www.youtube.com/watch?v=rzFX5NWojp0' }, { name: 'Seeing Theory: Discrete and continuous distributions', url: 'https://seeing-theory.brown.edu/probability-distributions/index.html#section2' }],
   },
   {
     id: 'chisq', topic: 'dist', name: 'Chi-square distribution', priority: 'S',
@@ -255,6 +280,7 @@ export const FORMULAS = [
     symbols: [['Z_i', 'independent standard normal variables'], ['k', 'degrees of freedom (df)']],
     cloze: '\\chi^2_k = \\blank{Z_1^2 + Z_2^2 + \\cdots + Z_k^2}',
     source: { name: 'OpenStax 11.1', url: OS + '11-1-facts-about-the-chi-square-distribution' },
+    links: [{ name: 'OpenStax: Facts about the chi-square distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/11-1-facts-about-the-chi-square-distribution' }],
   },
 
   // ───────────────────────── Normal & z ─────────────────────────
@@ -266,6 +292,7 @@ export const FORMULAS = [
     symbols: [['Z', 'the standardized variable'], ['0', 'mean'], ['1', 'standard deviation']],
     cloze: 'Z \\sim N(\\blank{0},\\,\\blank{1})',
     source: { name: 'OpenStax Ch. 6 formula review', url: OS + '6-formula-review' },
+    links: [{ name: 'OpenStax: The standard normal distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/6-1-the-standard-normal-distribution' }, { name: 'StatQuest: The normal distribution', url: 'https://www.youtube.com/watch?v=rzFX5NWojp0' }],
   },
   {
     id: 'zscore', topic: 'normal', name: 'z-score', priority: 'M',
@@ -277,6 +304,7 @@ export const FORMULAS = [
     whyQ: 'Why does the z-score subtract μ and then divide by σ?',
     why: 'Subtracting μ centers the value at 0; dividing by σ measures the distance in standard-deviation units, so every normal distribution becomes the same N(0, 1).',
     source: { name: 'OpenStax Ch. 6 formula review', url: OS + '6-formula-review' },
+    links: [{ name: 'OpenStax: The standard normal distribution (z-scores)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/6-1-the-standard-normal-distribution' }, { name: 'OpenStax: Using the normal distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/6-2-using-the-normal-distribution' }],
   },
   {
     id: 'empiricalrule', topic: 'normal', name: 'Empirical rule (68–95–99.7)', priority: 'M',
@@ -286,6 +314,7 @@ export const FORMULAS = [
     symbols: [['\\mu \\pm 1\\sigma', 'from one SD below to one SD above the mean']],
     cloze: '\\mu \\pm 2\\sigma \\;\\longrightarrow\\; \\approx \\blank{95\\%}',
     source: { name: 'OpenStax 6.1', url: OS + '6-1-the-standard-normal-distribution' },
+    links: [{ name: 'OpenStax: The standard normal distribution (Empirical Rule)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/6-1-the-standard-normal-distribution' }],
   },
 
   // ───────────────────────── Sampling & inference ─────────────────────────
@@ -300,6 +329,7 @@ export const FORMULAS = [
     why: 'Averaging n values cancels out some of the randomness, but not all of it: the variance of a mean is σ²/n, so its SD is σ/√n. Quadrupling the sample only halves the standard error.',
     note: 'Your notes say “standard deviation divided by number of samples”. It is divided by the square root of the sample size.',
     source: { name: 'OpenStax Ch. 7 formula review', url: OS + '7-formula-review' },
+    links: [{ name: 'StatQuest: The standard error', url: 'https://www.youtube.com/watch?v=XNgt7F6FqDU' }, { name: 'OpenStax: Central Limit Theorem for sample means', url: 'https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages' }],
   },
   {
     id: 'clt', topic: 'infer', name: 'Central Limit Theorem', priority: 'M',
@@ -309,6 +339,7 @@ export const FORMULAS = [
     symbols: [['\\bar{X}', 'the sample mean as a random variable'], ['\\mu', 'population mean'], ['\\sigma/\\sqrt{n}', 'standard error']],
     cloze: '\\bar{X} \\sim N\\!\\left(\\blank{\\mu},\\; \\frac{\\sigma}{\\sqrt{n}}\\right)',
     source: { name: 'OpenStax Ch. 7 formula review', url: OS + '7-formula-review' },
+    links: [{ name: 'Seeing Theory: Central Limit Theorem', url: 'https://seeing-theory.brown.edu/probability-distributions/index.html#section3' }, { name: 'StatQuest: The Central Limit Theorem', url: 'https://www.youtube.com/watch?v=YAlJCEDH2uY' }],
   },
   {
     id: 'zmean', topic: 'infer', name: 'z-score for a sample mean', priority: 'M',
@@ -318,6 +349,7 @@ export const FORMULAS = [
     symbols: [['\\bar{x}', 'observed sample mean'], ['\\mu', 'population mean'], ['\\sigma/\\sqrt{n}', 'standard error of the mean']],
     cloze: 'z = \\frac{\\bar{x} - \\mu}{\\blank{\\sigma / \\sqrt{n}}}',
     source: { name: 'OpenStax Ch. 7 formula review', url: OS + '7-formula-review' },
+    links: [{ name: 'OpenStax: Central Limit Theorem for sample means', url: 'https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages' }, { name: 'OpenStax: Using the Central Limit Theorem', url: 'https://openstax.org/books/introductory-statistics-2e/pages/7-3-using-the-central-limit-theorem' }],
   },
   {
     id: 'cimean', topic: 'infer', name: 'Confidence interval for a mean (σ known)', priority: 'M',
@@ -327,6 +359,7 @@ export const FORMULAS = [
     symbols: [['\\bar{x}', 'sample mean (the point estimate)'], ['z_{\\alpha/2}', 'critical value; α = 1 − confidence level'], ['\\sigma/\\sqrt{n}', 'standard error'], ['E', 'margin of error = z × σ/√n']],
     cloze: '\\bar{x} \\pm \\blank{z_{\\alpha/2}}\\,\\frac{\\sigma}{\\sqrt{n}}',
     source: { name: 'OpenStax Ch. 8 formula review', url: OS + '8-formula-review' },
+    links: [{ name: 'Seeing Theory: Confidence interval', url: 'https://seeing-theory.brown.edu/frequentist-inference/index.html#section2' }, { name: 'OpenStax: Single population mean, normal distribution', url: 'https://openstax.org/books/introductory-statistics-2e/pages/8-1-a-single-population-mean-using-the-normal-distribution' }],
   },
   {
     id: 'cit', topic: 'infer', name: 'Confidence interval for a mean (σ unknown)', priority: 'C',
@@ -336,6 +369,7 @@ export const FORMULAS = [
     symbols: [['s', 'sample standard deviation'], ['t_{\\alpha/2,\\,n-1}', 'critical value from the t table with n − 1 df']],
     cloze: '\\bar{x} \\pm t_{\\alpha/2,\\,\\blank{n-1}}\\,\\frac{s}{\\sqrt{n}}',
     source: { name: 'OpenStax Ch. 8 formula review', url: OS + '8-formula-review' },
+    links: [{ name: 'OpenStax: Single population mean, Student t', url: 'https://openstax.org/books/introductory-statistics-2e/pages/8-2-a-single-population-mean-using-the-student-t-distribution' }, { name: 'StatQuest: Confidence intervals', url: 'https://www.youtube.com/watch?v=TqOeMYtOc1w' }],
   },
   {
     id: 'ciprop', topic: 'infer', name: 'Confidence interval for a proportion', priority: 'S',
@@ -345,6 +379,7 @@ export const FORMULAS = [
     symbols: [['\\hat{p}', 'sample proportion = successes ÷ n (OpenStax writes p′)'], ['z_{\\alpha/2}', 'critical value']],
     cloze: '\\hat{p} \\pm z_{\\alpha/2}\\sqrt{\\frac{\\blank{\\hat{p}(1-\\hat{p})}}{n}}',
     source: { name: 'OpenStax Ch. 8 formula review', url: OS + '8-formula-review' },
+    links: [{ name: 'OpenStax: A population proportion', url: 'https://openstax.org/books/introductory-statistics-2e/pages/8-3-a-population-proportion' }, { name: 'Seeing Theory: Confidence interval', url: 'https://seeing-theory.brown.edu/frequentist-inference/index.html#section2' }],
   },
   {
     id: 'samplesize', topic: 'infer', name: 'Sample size for a target margin of error', priority: 'S',
@@ -354,6 +389,7 @@ export const FORMULAS = [
     symbols: [['E', 'desired margin of error'], ['\\sigma', 'assumed population SD'], ['z_{\\alpha/2}', 'critical value for the confidence level']],
     cloze: 'n = \\left(\\frac{z_{\\alpha/2}\\,\\sigma}{\\blank{E}}\\right)^2',
     source: { name: 'OpenStax Ch. 8 formula review', url: OS + '8-formula-review' },
+    links: [{ name: 'OpenStax: Calculating the sample size (section 8.1)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/8-1-a-single-population-mean-using-the-normal-distribution' }, { name: 'OpenStax: A population proportion (sample size)', url: 'https://openstax.org/books/introductory-statistics-2e/pages/8-3-a-population-proportion' }],
   },
   {
     id: 'teststat', topic: 'infer', name: 'One-sample test statistic (z and t)', priority: 'C',
@@ -363,6 +399,7 @@ export const FORMULAS = [
     symbols: [['\\mu_0', 'the mean claimed by H₀'], ['\\bar{x}', 'sample mean'], ['\\sigma/\\sqrt{n},\\; s/\\sqrt{n}', 'standard error']],
     cloze: 't = \\frac{\\bar{x} - \\blank{\\mu_0}}{s / \\sqrt{n}}',
     source: { name: 'Penn State STAT 200 §8.2.3.1', url: PSU + 'stat200/lesson/8/8.2/8.2.3/8.2.3.1' },
+    links: [{ name: 'OpenStax: Distribution needed for hypothesis testing', url: 'https://openstax.org/books/introductory-statistics-2e/pages/9-3-probability-distribution-needed-for-hypothesis-testing' }, { name: 'StatQuest: Hypothesis testing and the null hypothesis', url: 'https://www.youtube.com/watch?v=0oc49DyA3hU' }],
   },
   {
     id: 'decision', topic: 'infer', name: 'Hypothesis-test decision rule', priority: 'C',
@@ -372,6 +409,7 @@ export const FORMULAS = [
     symbols: [['\\alpha', 'significance level — the Type I error rate you accept'], ['p\\text{-value}', 'probability of data at least this extreme if H₀ is true'], ['H_0', 'null hypothesis (contains =, ≤, or ≥)']],
     cloze: '\\text{reject } H_0 \\text{ if } p\\text{-value} \\blank{<} \\alpha',
     source: { name: 'OpenStax Ch. 9 formula review', url: OS + '9-formula-review' },
+    links: [{ name: 'OpenStax: Rare events, the sample, decision and conclusion', url: 'https://openstax.org/books/introductory-statistics-2e/pages/9-4-rare-events-the-sample-decision-and-conclusion' }, { name: 'StatQuest: p-values, what they are and how to interpret them', url: 'https://www.youtube.com/watch?v=vemZtEM63GY' }],
   },
 ];
 

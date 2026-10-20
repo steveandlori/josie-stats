@@ -47,11 +47,11 @@ export function stageDiff(before, after) {
   const rank = Object.fromEntries(STAGES.map((s, i) => [s, i]));
   const out = { met: [], graduated: [], solid: [] };
   for (const [id, s] of after) {
-    const b = before.get(id) || 'new';
-    if (rank[s] <= rank[b]) continue;
-    if (s === 'learning') out.met.push(id);
-    else if (s === 'graduated') out.graduated.push(id);
-    else if (s === 'solid') out.solid.push(id);
+    const b = rank[before.get(id) || 'new'], a = rank[s];
+    if (a <= b) continue;
+    if (b < rank.learning) out.met.push(id);
+    if (b < rank.graduated && a >= rank.graduated) out.graduated.push(id);
+    if (b < rank.solid && a >= rank.solid) out.solid.push(id);
   }
   return out;
 }

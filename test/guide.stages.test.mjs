@@ -52,3 +52,8 @@ test('stageDiff lists formulas that advanced', () => {
   const after = new Map([['a', 'learning'], ['b', 'graduated'], ['c', 'solid'], ['d', 'solid']]);
   assert.deepEqual(stageDiff(before, after), { met: ['a'], graduated: ['b'], solid: ['c'] });
 });
+test('a formula met and graduated in one session counts in both', () => {
+  const before = new Map([['e', 'new'], ['f', 'new']]);
+  const after = new Map([['e', 'graduated'], ['f', 'solid']]);
+  assert.deepEqual(stageDiff(before, after), { met: ['e', 'f'], graduated: ['e', 'f'], solid: ['f'] });
+});
