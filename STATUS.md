@@ -1,6 +1,6 @@
 # Development status — Stats Cards
 
-Last updated: 2026-10-20 (session with Claude; see the research doc "Josie's Stats Flash Cards — Research & Plan"
+Last updated: 2026-10-20, published to GitHub (session with Claude; see the research doc "Josie's Stats Flash Cards — Research & Plan"
 in the claude.ai `josie-stats` project for the formula verification, learning-science findings, and design rationale).
 
 ## Where things are
@@ -10,27 +10,23 @@ in the claude.ai `josie-stats` project for the formula verification, learning-sc
 | App (static HTML/CSS/JS) | Built and tested headlessly in Chromium at phone width; no console errors |
 | Formula deck (`js/cards.js`) | 37 formulas + 30 scenario cards, every formula verified against OpenStax / Penn State / NIST / MathWorld; all LaTeX validated with KaTeX in strict mode |
 | Scheduling | FSRS via vendored `ts-fsrs` 5.4.1 (MIT); learning steps 1m/10m/10m so a new card needs 3 correct recalls to graduate; max interval capped at ~25% of days to the next exam |
-| Local copy | `C:\Users\steve\claude-here\josie-stats` — files only, **not yet a git repo** (the cloud session could not run git in that folder) |
-| GitHub | Repo `steveandlori/josie-stats` exists but is empty. Push from the cloud session was refused (Claude GitHub App lacks access to this repo). |
-| GitHub Pages | Not enabled yet (needs the push first) |
+| Local copy | `C:\Users\steve\claude-here\josie-stats` — git repo, `main` tracks `origin/main` |
+| GitHub | https://github.com/steveandlori/josie-stats — initial commit pushed 2026-10-20 (35 files; `Statistics.pdf` is gitignored and not public) |
+| GitHub Pages | Enabled 2026-10-20 (branch `main`, root). Live at https://steveandlori.github.io/josie-stats/ |
 | Live preview | Published as a claude.ai artifact ("Stats Cards") — fully working, usable today |
 
-## To publish from a terminal (in the local folder)
+## Publishing changes
+
+The site deploys automatically from `main`. From the local folder:
 
 ```
-cd C:\Users\steve\claude-here\josie-stats
-git init
 git add .
-git commit -m "Stats Cards: spaced-repetition flash cards for intro statistics formulas"
-git branch -M main
-git remote add origin https://github.com/steveandlori/josie-stats.git
-git push -u origin main
+git commit -m "describe the change"
+git push
 ```
 
-Then on GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → `main` / `/ (root)` → Save.**
-The site appears at https://steveandlori.github.io/josie-stats/ after a minute or two. (`.nojekyll` is already in the
-repo so the `vendor/` folder is served as-is.) Note: `Statistics.pdf` sits in the same folder; add it to `.gitignore`
-if it shouldn't be public.
+GitHub Pages rebuilds within a minute or two. `.nojekyll` keeps the `vendor/` folder served as-is.
+`Statistics.pdf` (the class notes) is in `.gitignore` and must stay out of the public repo.
 
 ## How the app is organized
 
