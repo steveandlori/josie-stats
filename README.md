@@ -8,16 +8,32 @@ Live site: https://steveandlori.github.io/josie-stats/
 
 ## How it works
 
-- **Study** — one shuffled stack per day, mixed across topics. You must tap *Show answer* before you can
-  grade, then choose *Forgot* or *Got it*. A new card stays in the session until it has been recalled
-  correctly three times; afterwards it comes back on a schedule set by [FSRS](https://github.com/open-spaced-repetition/ts-fsrs).
-- **Which formula?** — scenario cards: read a problem, pick the right formula from four look-alikes.
-  This is the skill exams actually test, and mixed practice is what builds it.
-- **Formulas** — the full sheet with meaning, when-to-use, and sources. Two corrections to the original
-  class notes are flagged.
-- **Progress** — cards due, cards learned, streak, and each formula's predicted recall right now.
-- **Settings** — new cards per day, two- or four-button grading, exam dates (review gaps are capped at
-  about a quarter of the days until the next exam), export/import of progress.
+The app is self-graded: think of the answer, reveal it, say honestly whether you had it. The first visit
+opens **How it works**, which explains the method and cites the research behind each part (23 references,
+every DOI resolved).
+
+- **Today** (the default) — a guided session built from four kinds of work: *Recall* what is due, *Meet*
+  new formulas (as a guess-first question, then the fill-in-the-blank version), *Deepen* graduated formulas
+  (meaning, symbols, why), and *Tell apart* look-alikes with scenario cards. A wrap-up shows which formulas
+  moved stage today.
+- **The recall loop** — every question has a writing pad (finger, stylus or mouse) and two buttons:
+  *I have an answer* and *Give me a hint*. Hints climb a ladder (what it computes, which symbols, the shape
+  with a blank). At reveal your sketch sits beside the formula. With no hints you grade yourself, *Not yet*
+  or *Got it*; with one hint the card grades itself Hard, with two or more it counts as not recalled.
+  A new card stays in the session until it has been recalled correctly three times; afterwards it comes
+  back on a schedule set by [FSRS](https://github.com/open-spaced-repetition/ts-fsrs).
+- **Study** — the plain stack: everything due plus new cards, mixed, without the phases.
+- **Which formula?** — scenario cards only: read a problem, pick the right formula from four look-alikes.
+- **Formulas** — the full sheet with meaning, when-to-use, sources and a *See it explained* link to a free
+  visual explainer (Seeing Theory, StatQuest, OpenStax). Two corrections to the original class notes are flagged.
+- **Progress** — where each formula sits (New, Learning, Graduated, Solid), reviews per day, how the average
+  gap between reviews is growing, and each formula's predicted recall right now.
+- **Settings** — new cards per day, two- or four-button grading, the writing pad, exam dates (review gaps
+  are capped at about a quarter of the days until the next exam), export/import of progress.
+
+## Tests
+
+Session logic lives in `js/guide.js` with no DOM dependencies. Run `node --test test/*.test.mjs` (Node 20+).
 
 Progress is stored in the browser (localStorage). Use *Export progress* to move it to another device.
 

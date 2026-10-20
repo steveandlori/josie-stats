@@ -79,20 +79,24 @@ export function composeSession({ deck, getCard, isDue, budget, rng = Math.random
   const dueTell = deck.filter(c => c.kind === 'scenario' && !isNew(c.id) && isDue(c.id));
   const tellNew = deck.filter(c => c.kind === 'scenario' && isNew(c.id) && settled(c.formula.id));
   const deepenNew = deck.filter(c => DEEPEN_KINDS.has(c.kind) && isNew(c.id) && settled(c.formula.id));
+  // Cloze cards whose recall card has been met but which were left behind (odd budget) finish the meet first.
+  const meetFinish = deck.filter(c => c.kind === 'cloze' && isNew(c.id) && stages.get(c.formula.id) !== 'new');
   const meetPairs = [];
   for (const c of deck) {
     if (c.kind !== 'recall' || stages.get(c.formula.id) !== 'new') continue;
-    const cloze = deck.find(x => x.kind === 'cloze' && x.formula.id === c.formula.id);
+    const cloze = deck.find(x => x.kind === 'cloze' && x.formula.id === c.formula.id && isNew(x.id));
     meetPairs.push(cloze ? [c, cloze] : [c]);
   }
 
   // Allocation: discrimination/deepening for graduated formulas gets up to half the budget first,
   // new formulas fill the rest, and anything left goes back to the first pool.
   let left = Math.max(0, budget);
+  const finish = meetFinish.slice(0, left);
+  left -= finish.length;
   const firstPool = [...tellNew, ...deepenNew];
   const firstTake = firstPool.slice(0, Math.min(Math.ceil(left / 2), firstPool.length));
   left -= firstTake.length;
-  const meet = [];
+  const meet = [...finish];
   for (const pair of meetPairs) {
     if (left <= 0) break;
     const take = pair.slice(0, left);

@@ -64,3 +64,19 @@ test('recall block comes first, then meet, then deepen/tell', () => {
   assert.ok(last('meet') < Math.min(first('deepen'), first('tell')));
   assert.deepEqual(r.counts, { recall: 1, meet: 2, deepen: 1, tell: 1 });
 });
+
+test('a cloze card left behind by an odd budget is introduced in a later session as meet', () => {
+  const deck = [...f('a'), ...f('b')];
+  const cards = { 'a:recall': { state: State.Learning, stability: 1, due: new Date(0) } }; // a met, its cloze still new; b new
+  const r = composeSession({ deck, getCard: id => cards[id] || null, isDue: () => false, budget: 1, rng });
+  assert.deepEqual(phases(r, 'meet'), ['a:cloze']);
+  assert.equal(r.queue.length, 1);
+});
+test('a cloze card already seen is not re-added by the meet pair', () => {
+  const deck = [...f('a')];
+  const cards = { 'a:cloze': rev() }; // odd imported state: cloze seen, recall not
+  const r = composeSession({ deck, getCard: id => cards[id] || null, isDue: id => id === 'a:cloze', budget: 4, rng });
+  assert.deepEqual(phases(r, 'meet'), ['a:recall']);
+  assert.deepEqual(phases(r, 'recall'), ['a:cloze']);
+  assert.equal(new Set(r.queue.map(c => c.id)).size, r.queue.length);
+});

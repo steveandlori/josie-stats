@@ -10,19 +10,24 @@ export function createPad(container, { height = 150 } = {}) {
   let strokes = 0;
   let drawing = false;
   let last = null;
+  let lastW = 0;
+  let lastGood = null; // last data URL taken before a resize, so a quick second resize cannot snapshot a cleared canvas
 
   const ink = () => (getComputedStyle(document.documentElement).getPropertyValue('--ink') || '#16213A').trim();
 
   function size(keep) {
-    const snapshot = keep && strokes ? canvas.toDataURL() : null;
     const dpr = window.devicePixelRatio || 1;
-    const w = Math.max(1, container.clientWidth);
     canvas.style.height = height + 'px';
+    const w = Math.max(1, canvas.clientWidth || container.clientWidth);
+    if (keep && w === lastW) return;
+    lastW = w;
+    const snapshot = keep && strokes ? (lastGood || canvas.toDataURL()) : null;
+    if (snapshot) lastGood = snapshot;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 2.5; ctx.strokeStyle = ink();
-    if (snapshot) restore(snapshot);
+    if (snapshot) restore(snapshot, () => { lastGood = null; });
   }
 
   function pos(e) {
@@ -45,13 +50,13 @@ export function createPad(container, { height = 150 } = {}) {
     last = p;
     e.preventDefault();
   }
-  function up() { drawing = false; last = null; }
+  function up() { drawing = false; last = null; lastGood = null; }
 
-  function clear() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes = 0; }
-  function restore(dataURL) {
+  function clear() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes = 0; lastGood = null; }
+  function restore(dataURL, done) {
     if (!dataURL) return;
     const img = new Image();
-    img.onload = () => { ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio || 1), height); strokes = Math.max(strokes, 1); };
+    img.onload = () => { ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio || 1), height); strokes = Math.max(strokes, 1); if (done) done(); };
     img.src = dataURL;
   }
 

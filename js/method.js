@@ -80,7 +80,7 @@ export function forgettingCurveSVG() {
     <path d="${noPts.join(' ')}" class="no-review"/>
     <path d="${withPath}" class="with-review"/>
     ${dots}
-    <text x="${x(days) - 4}" y="${(y(finalR) - 8).toFixed(1)}" class="lbl strong" text-anchor="end">with reviews</text>
+    <text x="${x(days) - 4}" y="${(y(finalR) - 16).toFixed(1)}" class="lbl strong" text-anchor="end">with reviews</text>
     <text x="${x(days) - 4}" y="${(y(recall(days, S0)) - 8).toFixed(1)}" class="lbl" text-anchor="end">without review</text>
     ${reviewTicks}
     <text x="${x(days)}" y="${H - B + 16}" class="lbl" text-anchor="end">day ${days}</text>

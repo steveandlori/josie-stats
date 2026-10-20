@@ -297,7 +297,7 @@ function phaseStripHTML() {
   for (const c of pending) { const p = session.phaseOf.get(c.id); if (p) left[p]++; }
   const cur = session.current && session.phaseOf.get(session.current.id);
   return `<div class="phases" aria-label="Today's phases">${Object.keys(PHASE_LABEL).filter(p => session.counts[p] > 0).map(p =>
-    `<span class="ph${left[p] ? '' : ' done'}${cur === p ? ' now' : ''}">${PHASE_LABEL[p]}<b>${left[p]}</b></span>`).join('')}</div>`;
+    `<span class="ph${left[p] ? '' : ' is-done'}${cur === p ? ' now' : ''}">${PHASE_LABEL[p]}<b>${left[p]}</b></span>`).join('')}</div>`;
 }
 
 function hintHTML(h) {
@@ -457,7 +457,8 @@ function renderWrapUp() {
 
 function onKey(e) {
   if (route !== 'today' && route !== 'study' && route !== 'drill') return;
-  if (e.target && /input|select|textarea/i.test(e.target.tagName)) return;
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target && /^(input|select|textarea|button|a)$/i.test(e.target.tagName)) return;
   const card = session.current;
   if (!card) return;
   if (!session.revealed) {
@@ -531,10 +532,12 @@ function momentumHTML(at) {
     const nowAvg = buildSnapshot({}, reviewCards).avgInterval;
     const weekAgo = new Date(at); weekAgo.setDate(weekAgo.getDate() - 7);
     const key7 = store.todayKey(weekAgo);
-    const pastKey = Object.keys(state.snapshots || {}).filter(k => k <= key7).sort().pop();
-    const then = pastKey ? state.snapshots[pastKey].avgInterval : null;
-    line = (then !== null && then !== undefined)
-      ? `Review cards now come back every ${nowAvg} days on average, ${nowAvg > then ? 'up from' : nowAvg < then ? 'down from' : 'the same as'} ${then} a week ago.`
+    const twoWeeksAgo = new Date(at); twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    const key14 = store.todayKey(twoWeeksAgo);
+    const pastKey = Object.keys(state.snapshots || {}).filter(k => k <= key7 && k >= key14).sort().pop();
+    const then = pastKey ? Number(state.snapshots[pastKey]?.avgInterval) : NaN;
+    line = Number.isFinite(then)
+      ? `Review cards now come back every ${nowAvg} days on average, ${nowAvg > then ? 'up from' : nowAvg < then ? 'down from' : 'the same as'} ${esc(String(then))} a week ago.`
       : `Review cards now come back every ${nowAvg} days on average. Check back next week to see the gap grow.`;
   }
   return `${bars}${line ? `<p class="small" style="margin-top:10px">${line}</p>` : ''}`;
@@ -631,7 +634,7 @@ function renderMethod() {
   const first = !state.settings.introSeen;
   view.innerHTML = methodHTML({ firstVisit: first, formulaCount: FORMULAS.length });
   fitMath(view);
-  if (first) { state.settings.introSeen = true; persist(); }
+  if (first) { state.settings.introSeen = true; store.saveState(state); }
 }
 
 /* ───────────────────────── routing ───────────────────────── */
@@ -642,7 +645,7 @@ function navigate() {
   const views = ['today', 'study', 'drill', 'sheet', 'progress', 'method', 'settings'];
   if (!views.includes(hash)) hash = 'today';
   // First visit: explain the method before the first card.
-  if (!state.settings.introSeen && hash === 'today') hash = 'method';
+  if (!state.settings.introSeen && hash === 'today') { hash = 'method'; try { history.replaceState(null, '', '#method'); } catch (e) { /* ignore */ } }
   route = hash;
   document.querySelectorAll('.tabs a').forEach(a => { if (a.dataset.view === route) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   scheduler = makeScheduler(state.settings);
