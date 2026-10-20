@@ -52,7 +52,7 @@ Applies to recall, cloze, use, symbols and why cards, in Today and in Study. Sce
 
 **Front.**
 - Prompt phrased as a question, never "Write": "What's the formula for **Mean (average)**?"
-- When the card is new: "You haven't met this one yet. Guess anyway, even a rough one. A guess, even a wrong one, makes the answer stick."
+- When the card is new: "You haven't met this one yet. Guess anyway, even a rough one. A guess, even a wrong one, helps the answer stick."
 - A modality nudge, rotating per card: "Say it out loud this time." / "Write it down, on paper or in the pad below." / "Picture it in your head this time." Each has a one-line reason in the How it works screen, not on the card.
 - A scratchpad: a drawing area below the prompt, open by default, about 150px tall, for finger, stylus or mouse, with Clear. A "Hide pad" link turns it off and the choice is remembered. If the learner drew anything, the sketch is shown beside the answer at reveal under "Your answer", with the formula under "The formula".
 - Two buttons: **I have an answer** (primary) and **Give me a hint**.

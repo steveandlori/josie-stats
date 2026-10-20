@@ -61,10 +61,28 @@ themselves (right pick = Got it, wrong = Forgot).
 - Population SD: `σ = √( Σ(x−μ)² / N )` — the notes have the N outside the root.
 - Standard error: `σ / √n` — the notes say "divided by number of samples".
 
-## Content review
+## Content review (2026-10-20)
 
-(To be filled in by the session that ran it: adversarial review of every research claim in `js/method.js` and every
-learner-facing line, verdicts and fixes.)
+Three checks were run on the research content before publishing, because a wrong claim misleads the student.
+
+1. **DOI resolution.** All 24 references in `js/method.js` resolved against doi.org with content negotiation; the APA strings
+   returned were used for the bibliography. No bibliographic errors.
+2. **Adversarial claim review** by a separate agent, checking each cited sentence against the paper's abstract (Europe PMC,
+   Crossref, Semantic Scholar, and full text for Rohrer & Taylor 2007, Pan & Sana 2021, Cepeda 2006, Dunlosky & Rawson 2012).
+   Verdict: publish after fixes. Fixed: Pan & Sana 2021 (was "both beat rereading"; the paper compared against no test, and
+   pretesting did at least as well as posttesting); Little & Bjork 2016 was applied to the Which formula? cards, which are
+   post-study items, so Little, Bjork, Bjork & Angello 2012 was added as ref 24 for that claim; Dunlosky & Rawson 2012 (the
+   paper rules out "stopped practising too early" as the mechanism; now worded as accuracy predicting retention after allowing
+   for practice); MacLeod 2010 production effect (holds in mixed lists only; worded accordingly in the page and the nudge);
+   Kapur 2014 (benefit is conceptual understanding and transfer, procedures equal); FSRS attribution (the KDD 2022 paper is the
+   memory model fitted to 220 million logs, not FSRS's own parameters); "makes the answer stick" softened to "helps";
+   "There is nothing to type" became "Nothing has to be typed" because the writing pad exists; wrap-up "Spacing is what
+   makes this stick" became "a big part of".
+3. **Fresh code review** of the whole diff by a separate agent: 2 bugs (orphaned cloze card on an odd new-card budget; first-visit
+   redirect stuck when the URL already ended in `#today`) and 9 minors, all fixed and the bugs covered by unit tests.
+
+Deliberately not cited: Mueller & Oppenheimer 2014 (pen vs keyboard), because Morehead, Dunlosky & Rawson 2019 found the
+effect much weaker on replication.
 
 ## Banked specs
 

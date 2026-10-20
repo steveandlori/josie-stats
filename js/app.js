@@ -352,7 +352,7 @@ function renderStudy() {
     <div class="progress"><i style="width:${pct}%"></i></div>${phaseStripHTML()}
     <section class="card t-${card.topic}" aria-live="polite">${cardHeader(card, phase)}${frontHTML(card)}`;
 
-  if (!isScenario && fresh) body += `<p class="meet">You haven't met this one yet. Guess anyway, even a rough one. A guess, even a wrong one, makes the answer stick.</p>`;
+  if (!isScenario && fresh) body += `<p class="meet">You haven't met this one yet. Guess anyway, even a rough one. A guess, even a wrong one, helps the answer stick.</p>`;
   if (!isScenario && !session.revealed) body += `<p class="nudge">${esc(nudgeFor(session.shown).text)}</p>`;
   if (session.hints > 0) body += `<ol class="hints" aria-label="Hints">${ladder.slice(0, session.hints).map(hintHTML).join('')}</ol>`;
 
@@ -450,7 +450,7 @@ function renderWrapUp() {
   view.innerHTML = `<div class="card done"><h2>Session done</h2><div class="big">${session.done}</div><p class="muted">cards answered</p>
     <div class="stats moved-stats">${tile(diff.met.length, diff.met.length === 1 ? 'formula met' : 'formulas met', diff.met)}${tile(diff.graduated.length, 'graduated', diff.graduated)}${tile(diff.solid.length, 'now solid', diff.solid)}</div>
     <div class="pipeline-wrap">${pipelineHTML(countStages(after))}</div>
-    <p style="margin-top:14px">${next ? `Next cards come due ${fmtDue(next)}.` : ''} Coming back tomorrow matters more than doing more today. Spacing is what makes this stick.</p>
+    <p style="margin-top:14px">${next ? `Next cards come due ${fmtDue(next)}.` : ''} Coming back tomorrow matters more than doing more today. Spacing is a big part of what makes this stick.</p>
     <div class="row"><button class="btn" id="ahead">Study 10 more</button><a class="btn btn-quiet" href="#progress">See progress</a></div></div>`;
   $('#ahead').onclick = () => studyAhead(10);
 }

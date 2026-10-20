@@ -148,11 +148,11 @@ export function autoRating(hints) { return hints <= 0 ? null : hints === 1 ? 2 :
 export function revealLine(hints) {
   if (hints <= 0) return null;
   if (hints === 1) return 'You got there with a nudge. It will come back soon.';
-  return 'Not yet, and that is fine. Seeing the answer right after a real try is how it sticks.';
+  return 'Not yet, and that is fine. Seeing the answer right after a real try is how it starts to stick.';
 }
 
 export const NUDGES = [
-  { text: 'Say it out loud this time.', reason: 'Saying material aloud makes it more memorable than reading it silently (the production effect).' },
+  { text: 'Say it out loud this time.', reason: 'Speaking your answer is as good for memory as thinking it, and saying some cards aloud makes them stand out from the rest (the production effect).' },
   { text: 'Write it down this time, on paper or in the pad below.', reason: 'A written answer is a commitment. It keeps your self-grading honest, which is what keeps the schedule accurate.' },
   { text: 'Picture it in your head this time.', reason: 'Retrieving silently strengthens memory as much as writing it out. What matters is the attempt.' },
 ];
