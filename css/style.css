@@ -222,7 +222,8 @@ p { margin: 0; }
 .source { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
 
 .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
-.grade.four { grid-template-columns: repeat(4, 1fr); }
+.grade.n3 { grid-template-columns: repeat(3, 1fr); }
+.grade.n4 { grid-template-columns: repeat(4, 1fr); }
 .grade.one { grid-template-columns: 1fr; }
 .recall-row { display: flex; align-items: center; gap: 10px; }
 .recall-row .name { flex: 1; }

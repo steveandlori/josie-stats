@@ -4,13 +4,22 @@ const KEY = 'josie-stats-v1';
 
 const DEFAULT_SETTINGS = {
   newPerDay: 10,
-  fourButtons: false,
+  gradeButtons: 3,   // 2 = Not yet / Got it; 3 adds Partly; 4 adds Easy
   midterm: '',   // YYYY-MM-DD
   final: '',     // YYYY-MM-DD
   retention: 0.9,
   introSeen: false, // How it works shown once on first visit
   showPad: true,    // scratchpad under recall prompts
 };
+
+// Older saves had a boolean fourButtons; map it onto gradeButtons.
+function normalizeSettings(raw) {
+  const s = { ...DEFAULT_SETTINGS, ...(raw || {}) };
+  if (raw && raw.gradeButtons === undefined && raw.fourButtons !== undefined) s.gradeButtons = raw.fourButtons ? 4 : 3;
+  if (![2, 3, 4].includes(s.gradeButtons)) s.gradeButtons = 3;
+  delete s.fourButtons;
+  return s;
+}
 
 function todayKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -22,7 +31,7 @@ export function loadState() {
   let s = {};
   if (raw) { try { s = JSON.parse(raw); } catch (e) { s = {}; } }
   return {
-    settings: { ...DEFAULT_SETTINGS, ...(s.settings || {}) },
+    settings: normalizeSettings(s.settings),
     cards: s.cards || {},          // cardId -> fsrs card (dates as ISO strings)
     log: s.log || [],              // {id, rating, at}
     newIntroduced: s.newIntroduced || {}, // dayKey -> [cardIds]
@@ -44,7 +53,7 @@ export function importState(text) {
   const s = JSON.parse(text);
   if (!s || s.app !== 'josie-stats') throw new Error('That file is not a Stats Cards progress file.');
   return {
-    settings: { ...DEFAULT_SETTINGS, ...(s.settings || {}) },
+    settings: normalizeSettings(s.settings),
     cards: s.cards || {},
     log: s.log || [],
     newIntroduced: s.newIntroduced || {},

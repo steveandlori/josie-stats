@@ -392,7 +392,7 @@ function renderStudy() {
     }
     body += `<div class="answer">${top}${compare}${backHTML(card, { omitFormula: !!session.sketch })}</div>`;
 
-    const four = state.settings.fourButtons;
+    const nb = state.settings.gradeButtons;
     const preview = scheduler.repeat(cardState(card.id) || emptyCard(now()), now());
     const due = r => fmtDue(preview[r].card.due);
     const auto = isScenario ? null : autoRating(session.hints);
@@ -405,10 +405,11 @@ function renderStudy() {
     } else if (auto !== null) {
       body += `<div class="grade one"><button class="btn g-next" data-grade="${auto}" data-auto="1">Next<small>back ${due(auto)}</small></button></div><p class="hint">Graded for you because you used a hint. <span class="kbd">space</span> next</p>`;
     } else {
-      body += four
-        ? `<div class="grade four"><button class="btn g-again" data-grade="1">Not yet<small>${due(1)}</small></button><button class="btn g-hard" data-grade="2">Hard<small>${due(2)}</small></button><button class="btn g-good" data-grade="3">Got it<small>${due(3)}</small></button><button class="btn g-easy" data-grade="4">Easy<small>${due(4)}</small></button></div>`
-        : `<div class="grade"><button class="btn g-again" data-grade="1">Not yet<small>${due(1)}</small></button><button class="btn g-good" data-grade="3">Got it<small>${due(3)}</small></button></div>`;
-      body += `<p class="hint"><span class="kbd">1</span> not yet &nbsp; <span class="kbd">${four ? '3' : '2'}</span> got it</p>`;
+      const btn = (r, cls, label) => `<button class="btn ${cls}" data-grade="${r}">${label}<small>${due(r)}</small></button>`;
+      const buttons = [btn(1, 'g-again', 'Not yet'), ...(nb >= 3 ? [btn(2, 'g-hard', 'Partly')] : []), btn(3, 'g-good', 'Got it'), ...(nb >= 4 ? [btn(4, 'g-easy', 'Easy')] : [])];
+      body += `<div class="grade n${nb}">${buttons.join('')}</div>`;
+      const keys = nb === 2 ? '<span class="kbd">1</span> not yet &nbsp; <span class="kbd">2</span> got it' : `<span class="kbd">1</span> not yet &nbsp; <span class="kbd">2</span> partly &nbsp; <span class="kbd">3</span> got it${nb === 4 ? ' &nbsp; <span class="kbd">4</span> easy' : ''}`;
+      body += `<p class="hint">${keys}</p>`;
     }
   } else if (!isScenario) {
     if (state.settings.showPad) body += `<div id="padhost"></div><p class="hint"><a href="#" id="hidepad">Hide the writing pad</a></p>`;
@@ -488,8 +489,8 @@ function onKey(e) {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); const b = autoBtn || $('#view [data-grade]'); if (b) b.click(); }
     return;
   }
-  const four = state.settings.fourButtons;
-  const map = four ? { 1: 1, 2: 2, 3: 3, 4: 4 } : { 1: 1, 2: 3 };
+  const nb = state.settings.gradeButtons;
+  const map = nb === 2 ? { 1: 1, 2: 3 } : nb === 3 ? { 1: 1, 2: 2, 3: 3 } : { 1: 1, 2: 2, 3: 3, 4: 4 };
   if (map[e.key]) { const b = $(`#view [data-grade="${map[e.key]}"]`); if (b && !b.disabled) b.click(); }
 }
 
@@ -611,8 +612,8 @@ function renderSettings() {
     <div class="panel">
       <div class="field"><label for="npd">New cards per day</label><span class="help">10 a day introduces the whole deck in about ${Math.ceil(DECK.length / 10)} days. Fewer if reviews start piling up.</span>
         <select id="npd">${[5, 10, 15, 20, 30].map(n => `<option value="${n}" ${s.newPerDay === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-      <div class="field"><label>Grading buttons</label><span class="help">Two is enough and avoids the one mistake the scheduler can't correct: pressing "Hard" when you actually forgot.</span>
-        <div class="seg" role="group"><button data-fb="0" aria-pressed="${!s.fourButtons}">Forgot / Got it</button><button data-fb="1" aria-pressed="${s.fourButtons}">Forgot / Hard / Got it / Easy</button></div></div>
+      <div class="field"><label>Grading buttons</label><span class="help">Partly is for when you had most of it: a learning card repeats its step, a graduated card comes back sooner. Easy pushes a card out further than most memories have earned, so it is off by default.</span>
+        <div class="seg" role="group"><button data-gb="2" aria-pressed="${s.gradeButtons === 2}">Not yet / Got it</button><button data-gb="3" aria-pressed="${s.gradeButtons === 3}">+ Partly</button><button data-gb="4" aria-pressed="${s.gradeButtons === 4}">+ Easy</button></div></div>
       <div class="field"><label>Writing pad</label><span class="help">A space under each question to write your answer by finger, stylus or mouse. Writing keeps self-grading honest.</span>
         <div class="seg" role="group"><button data-pad="1" aria-pressed="${s.showPad}">Show</button><button data-pad="0" aria-pressed="${!s.showPad}">Hide</button></div></div>
       <div class="field"><label for="mid">Midterm date</label><input id="mid" type="date" value="${esc(s.midterm)}"></div>
@@ -624,7 +625,7 @@ function renderSettings() {
 
   const save = () => { scheduler = makeScheduler(state.settings); persist(); toast('Saved'); };
   $('#npd').onchange = e => { s.newPerDay = Number(e.target.value); save(); };
-  view.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => { s.fourButtons = b.dataset.fb === '1'; save(); renderSettings(); });
+  view.querySelectorAll('[data-gb]').forEach(b => b.onclick = () => { s.gradeButtons = Number(b.dataset.gb); save(); renderSettings(); });
   view.querySelectorAll('[data-pad]').forEach(b => b.onclick = () => { s.showPad = b.dataset.pad === '1'; save(); renderSettings(); });
   $('#mid').onchange = e => { s.midterm = e.target.value; save(); };
   $('#fin').onchange = e => { s.final = e.target.value; save(); };

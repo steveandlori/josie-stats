@@ -19,8 +19,8 @@ every DOI resolved).
 - **The recall loop** — every question has a writing pad (finger, stylus or mouse; *Write bigger* expands it to
   nearly the whole screen, with the question in the top bar and Done, Clear and I have an answer at hand) and two buttons:
   *I have an answer* and *Give me a hint*. Hints climb a ladder (what it computes, which symbols, the shape
-  with a blank). At reveal your sketch sits beside the formula. With no hints you grade yourself, *Not yet*
-  or *Got it*; with one hint the card grades itself Hard, with two or more it counts as not recalled.
+  with a blank). At reveal your sketch sits beside the formula. With no hints you grade yourself, *Not yet*,
+  *Partly* or *Got it*; with one hint the card grades itself Partly, with two or more it counts as not recalled.
   A new card stays in the session until it has been recalled correctly three times; afterwards it comes
   back on a schedule set by [FSRS](https://github.com/open-spaced-repetition/ts-fsrs).
 - **Which formula?** — scenario cards only: read a problem, pick the right formula from four look-alikes.
@@ -28,7 +28,7 @@ every DOI resolved).
   visual explainer (Seeing Theory, StatQuest, OpenStax). Two corrections to the original class notes are flagged.
 - **Progress** — where each formula sits (New, Learning, Graduated, Solid), reviews per day, how the average
   gap between reviews is growing, and each formula's predicted recall right now.
-- **Settings** — new cards per day, two- or four-button grading, the writing pad, exam dates (review gaps
+- **Settings** — new cards per day, two, three or four grading buttons, the writing pad, exam dates (review gaps
   are capped at about a quarter of the days until the next exam), export/import of progress.
 
 ## Tests
