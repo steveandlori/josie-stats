@@ -16,7 +16,8 @@ every DOI resolved).
   new formulas (as a guess-first question, then the fill-in-the-blank version), *Deepen* graduated formulas
   (meaning, symbols, why), and *Tell apart* look-alikes with scenario cards. A wrap-up shows which formulas
   moved stage today.
-- **The recall loop** — every question has a writing pad (finger, stylus or mouse) and two buttons:
+- **The recall loop** — every question has a writing pad (finger, stylus or mouse; *Write bigger* expands it to
+  nearly the whole screen, with the question in the top bar and Done, Clear and I have an answer at hand) and two buttons:
   *I have an answer* and *Give me a hint*. Hints climb a ladder (what it computes, which symbols, the shape
   with a blank). At reveal your sketch sits beside the formula. With no hints you grade yourself, *Not yet*
   or *Got it*; with one hint the card grades itself Hard, with two or more it counts as not recalled.

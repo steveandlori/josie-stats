@@ -299,6 +299,19 @@ function phaseStripHTML() {
     `<span class="ph${left[p] ? '' : ' is-done'}${cur === p ? ' now' : ''}">${PHASE_LABEL[p]}<b>${left[p]}</b></span>`).join('')}</div>`;
 }
 
+// Short plain-text version of the question for the expanded writing pad's top bar.
+function padTitle(card) {
+  const f = card.formula;
+  switch (card.kind) {
+    case 'recall': return `Formula for ${f.name}`;
+    case 'cloze': return `Fill in the blank: ${f.name}`;
+    case 'use': return 'What does this compute, and when?';
+    case 'symbols': return 'What does each symbol stand for?';
+    case 'why': return f.whyQ || f.name;
+    default: return f.name;
+  }
+}
+
 function hintHTML(h) {
   const lbl = t => `<span class="lbl">${t}</span>`;
   switch (h.type) {
@@ -407,12 +420,16 @@ function renderStudy() {
   view.innerHTML = body;
   fitMath(view);
 
-  const host = $('#padhost');
-  if (host) { session.pad = createPad(host); if (session.sketch) session.pad.restore(session.sketch); }
   const captureSketch = () => { if (session.pad) { session.sketch = session.pad.toDataURL(); dropPad(); } };
+  const doReveal = () => { captureSketch(); session.revealed = true; renderStudy(); };
+  const host = $('#padhost');
+  if (host) {
+    session.pad = createPad(host, { title: padTitle(card), onAnswer: doReveal });
+    if (session.sketch) session.pad.restore(session.sketch);
+  }
 
   const reveal = $('#reveal');
-  if (reveal) reveal.onclick = () => { captureSketch(); session.revealed = true; renderStudy(); };
+  if (reveal) reveal.onclick = doReveal;
   const hint = $('#hint');
   if (hint) hint.onclick = () => {
     captureSketch();
