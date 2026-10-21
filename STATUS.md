@@ -84,6 +84,23 @@ Three checks were run on the research content before publishing, because a wrong
 Deliberately not cited: Mueller & Oppenheimer 2014 (pen vs keyboard), because Morehead, Dunlosky & Rawson 2019 found the
 effect much weaker on replication.
 
+## QA (2026-10-20, evening)
+
+Testing is done by a separate QA agent with a written plan (Steve's request), not inline. Latest run, verdict SHIP, 0 errors:
+first-visit flow; full-screen writing pad at 390px and 1100px in light and dark (ink carries across expand/collapse, "I have an
+answer" from the expanded pad); nine simulated days with a faked clock (all four phases appear, 18 formulas Solid by day 9,
+wrap-up every day, momentum line "up from 2 a week ago", 9 snapshots, 9-day streak); export/import round trip (90 cards,
+9 snapshots, 330 log entries restored); keyboard hint path; three-button grading and the 2/3/4 setting.
+Non-blocking notes: GitHub Pages serves JS with `cache-control: max-age=600`, so for up to 10 minutes after a deploy a returning
+browser can pair a fresh index.html with a stale module (no cache-busting on module imports); pad ink colour is fixed at draw
+time, so a stroke drawn before an OS theme flip keeps its old colour until the next card.
+
+## Grading (changed 2026-10-20 at Steve's request)
+
+Default is three buttons, Not yet / Partly / Got it (Settings: 2, 3 or 4). Partly = FSRS Hard: a learning card keeps its
+current step instead of restarting (back in ~6 min vs 1 min), a graduated card comes back sooner without counting as a lapse.
+Only Got it advances a learning step, so Partly cannot shortcut the three clean recalls. Old saves with `fourButtons` migrate.
+
 ## Banked specs
 
 - **Spec B, inline diagrams** for formulas whose picture is the concept (z-score area, SE narrowing with n, variance as
