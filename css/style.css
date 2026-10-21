@@ -316,7 +316,14 @@ p { margin: 0; }
 .answer-row { margin-top: 14px; flex-wrap: nowrap; }
 .answer-row .btn-primary { flex: 1; width: auto; }
 .pad { margin-top: 12px; border: 2px dashed var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
+.pad { position: relative; }
 .pad canvas { display: block; width: 100%; touch-action: none; cursor: crosshair; }
+.pad.erasing canvas { cursor: cell; }
+.pad-placeholder { position: absolute; left: 14px; top: 10px; color: var(--ink-3); font-size: 14px; pointer-events: none; }
+.pad.has-ink .pad-placeholder { display: none; }
+.pad-tools { display: inline-flex; border: 2px solid var(--line); border-radius: 10px; overflow: hidden; }
+.pad-tools .btn { border-radius: 0; background: transparent; color: var(--ink-2); min-height: 34px; }
+.pad-tools .btn[aria-pressed="true"] { background: var(--pen); color: var(--pen-ink); }
 .pad-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 6px 6px 12px; }
 .pad-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
 .btn-icon { padding: 6px 9px; min-width: 38px; }
@@ -329,7 +336,8 @@ p { margin: 0; }
 .pad-title { font-weight: 700; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pad.expanded canvas { flex: 1; min-height: 0; }
 .pad.expanded .pad-bar { padding: 10px 14px; border-top: 1px solid var(--line); background: var(--card); }
-.pad.expanded .pad-hint, .pad.expanded [data-pad-expand] { display: none; }
+.pad.expanded [data-pad-expand] { display: none; }
+.pad.expanded .pad-placeholder { top: 60px; }
 .pad.expanded [data-pad-answer] { display: inline-flex; }
 body.pad-open { overflow: hidden; }
 .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
