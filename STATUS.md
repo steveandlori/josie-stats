@@ -32,12 +32,12 @@ GitHub Pages rebuilds within a minute or two. `.nojekyll` keeps the `vendor/` fo
 
 ## How the app is organized
 
-- `index.html` — shell: header tabs (Today, Study, Which formula?, Formulas, Progress, How it works, Settings), empty `<main>`, loads KaTeX (global) and `js/app.js` (ES module).
+- `index.html` — shell: header tabs (Today, Which formula?, Formulas, Progress, How it works, Settings), empty `<main>`, loads KaTeX (global) and `js/app.js` (ES module).
 - `js/cards.js` — the deck. `FORMULAS[]` (id, topic, name, priority M/C/S, latex[], meaning, when, symbols[], cloze with
   `\blank{...}`, optional whyQ/why, optional note = correction to Josie's notes, source). `SCENARIOS[]` (text, answer id,
   3 distractor ids). Adding a formula = adding one object; cards are generated from it.
 - `js/app.js` — builds ~180 cards from the deck (recall, use, cloze, symbols, why, scenario), runs sessions (Today = guided,
-  Study = plain, Drill = scenarios), renders the recall loop (question-first prompt, nudge, writing pad, hint ladder, sketch
+  Drill = scenarios; the old plain Study tab was removed 2026-10-20 as redundant with "Study 10 more"), renders the recall loop (question-first prompt, nudge, writing pad, hint ladder, sketch
   beside answer, automatic grade after hints), the wrap-up, and the views (sheet, progress, method, settings); hash routing;
   first-visit redirect to How it works; keyboard shortcuts (space / h / 1 / 2).
 - `js/guide.js` — pure, DOM-free: formula stages (New → Learning → Graduated → Solid, derived from FSRS states), the Today

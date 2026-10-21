@@ -222,7 +222,7 @@ const session = {
   stagesBefore: null // formula stages at session start (Today only), for the wrap-up
 };
 
-const MODE_TITLE = { today: 'Today', study: 'Study', drill: 'Which formula?' };
+const MODE_TITLE = { today: 'Today', drill: 'Which formula?' };
 
 function startSession(mode = 'today') {
   session.mode = mode;
@@ -232,12 +232,10 @@ function startSession(mode = 'today') {
   let cards;
   if (mode === 'drill') {
     cards = shuffle(DECK.filter(c => c.kind === 'scenario'));
-  } else if (mode === 'today') {
+  } else {
     const r = composeSession({ deck: DECK, getCard: cardState, isDue: id => isDue(id), budget: newAllowance() });
     cards = r.queue; session.phaseOf = r.phaseOf; session.counts = r.counts;
     session.stagesBefore = stagesByFormula(DECK, cardState);
-  } else {
-    cards = shuffle([...dueCards(), ...newCards(newAllowance())]);
   }
   session.queue = cards;
   session.total = cards.length;
@@ -317,7 +315,7 @@ function hintHTML(h) {
 function renderStudy() {
   const view = $('#view');
   const card = session.current;
-  const title = MODE_TITLE[session.mode] || 'Study';
+  const title = MODE_TITLE[session.mode] || 'Today';
 
   if (!card && !session.queue.length) {
     // Nothing queued: either session finished or nothing due.
@@ -457,7 +455,7 @@ function renderWrapUp() {
 }
 
 function onKey(e) {
-  if (route !== 'today' && route !== 'study' && route !== 'drill') return;
+  if (route !== 'today' && route !== 'drill') return;
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.target && /^(input|select|textarea|button|a)$/i.test(e.target.tagName)) return;
   const card = session.current;
@@ -640,7 +638,7 @@ function renderMethod() {
 
 /* ───────────────────────── routing ───────────────────────── */
 
-// Coming back to Today or Study the same day continues the session instead of rebuilding it.
+// Coming back to Today the same day continues the session instead of rebuilding it.
 // A finished session picks up any cards that have come due since the wrap-up.
 function resumeOrStart(mode) {
   const sameDay = session.mode === mode && session.day === store.todayKey();
@@ -659,15 +657,15 @@ function resumeOrStart(mode) {
 let route = 'today';
 function navigate() {
   let hash = (location.hash || '#today').slice(1);
-  const views = ['today', 'study', 'drill', 'sheet', 'progress', 'method', 'settings'];
-  if (!views.includes(hash)) hash = 'today';
+  const views = ['today', 'drill', 'sheet', 'progress', 'method', 'settings'];
+  if (!views.includes(hash)) hash = 'today'; // includes the old #study
   // First visit: explain the method before the first card.
   if (!state.settings.introSeen && hash === 'today') { hash = 'method'; try { history.replaceState(null, '', '#method'); } catch (e) { /* ignore */ } }
   route = hash;
   document.querySelectorAll('.tabs a').forEach(a => { if (a.dataset.view === route) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   scheduler = makeScheduler(state.settings);
   dropPad();
-  if (route === 'today' || route === 'study') resumeOrStart(route);
+  if (route === 'today') resumeOrStart('today');
   else if (route === 'drill') startSession('drill');
   else if (route === 'sheet') renderSheet();
   else if (route === 'progress') renderProgress();

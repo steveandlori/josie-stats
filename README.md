@@ -22,7 +22,6 @@ every DOI resolved).
   or *Got it*; with one hint the card grades itself Hard, with two or more it counts as not recalled.
   A new card stays in the session until it has been recalled correctly three times; afterwards it comes
   back on a schedule set by [FSRS](https://github.com/open-spaced-repetition/ts-fsrs).
-- **Study** — the plain stack: everything due plus new cards, mixed, without the phases.
 - **Which formula?** — scenario cards only: read a problem, pick the right formula from four look-alikes.
 - **Formulas** — the full sheet with meaning, when-to-use, sources and a *See it explained* link to a free
   visual explainer (Seeing Theory, StatQuest, OpenStax). Two corrections to the original class notes are flagged.
