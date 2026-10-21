@@ -63,12 +63,10 @@ themselves (right pick = Got it, wrong = Forgot).
 
 ## Where the last session stopped (2026-10-20, late)
 
-- Live site = commit `160c010` (deck fixes from the formula review). Everything above that is published and QA'd.
-- **Local, committed, NOT pushed:** `83c7fb2` "Pad: pen and eraser tools, placeholder text on the empty canvas"
-  (`js/pad.js`, `css/style.css`). A QA agent was testing it when the session ended (partial erase, expanded mode, dark mode,
-  survival across a hint re-render). **Next session:** re-run that QA (plan: draw, switch to `[data-pad-tool="eraser"]`,
-  erase the middle of a stroke, ink drops but stays > 0; pen again; expand/collapse; dark mode; hint re-render), fix anything
-  found, then `git push`. Do not push unverified.
+- Live site = the pad pen/eraser commit (QA'd: ship, 0 errors). Everything is pushed; working tree clean.
+- Banked observations from the eraser QA (none blocking): strokes drawn in expanded mode shrink to fit when collapsed, so a
+  reveal after collapsing shows a small sketch (product question: keep expanded ink at full size and crop instead?); erasing
+  every pixel leaves the pad flagged as inked; the tool resets to pen after a hint re-render.
 - Feature requests banked from Steve today: cache-busting for module scripts (10-minute stale window after deploys);
   ink colour re-tint on theme flip (cosmetic); Spec B diagrams; Spec C gamification; an import process for new course material.
 
