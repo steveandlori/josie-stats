@@ -34,6 +34,8 @@ every DOI resolved).
 ## Tests
 
 Session logic lives in `js/guide.js` with no DOM dependencies. Run `node --test test/*.test.mjs` (Node 20+).
+`node test/deck.check.mjs` renders every formula, cloze and symbol with KaTeX in strict mode and checks the scenario cards;
+`python3 test/linkcheck.py` confirms every source and explainer URL is live.
 
 Progress is stored in the browser (localStorage). Use *Export progress* to move it to another device.
 

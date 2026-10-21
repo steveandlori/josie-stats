@@ -9,7 +9,7 @@ in the claude.ai `josie-stats` project for the formula verification, learning-sc
 | --- | --- |
 | App (static HTML/CSS/JS) | Guided loop (Spec A) built; tested headlessly in Chromium at 390px and 1100px, light and dark; no console errors |
 | Spec A, guided learning loop | Done. Spec: `docs/superpowers/specs/2026-10-20-guided-learning-loop-design.md`; plan: `docs/superpowers/plans/2026-10-20-guided-learning-loop.md`. Content review outcome: see "Content review" below |
-| Unit tests | `node --test test/*.test.mjs` — 33 tests on `js/guide.js` and `js/store.js`, all passing |
+| Unit tests | `node --test test/*.test.mjs` (38 tests on `js/guide.js` and `js/store.js`), `node test/deck.check.mjs` (deck integrity), `python3 test/linkcheck.py` (live URLs); all passing |
 | Formula deck (`js/cards.js`) | 37 formulas + 30 scenario cards, every formula verified against OpenStax / Penn State / NIST / MathWorld; all LaTeX validated with KaTeX in strict mode |
 | Scheduling | FSRS via vendored `ts-fsrs` 5.4.1 (MIT); learning steps 1m/10m/10m so a new card needs 3 correct recalls to graduate; max interval capped at ~25% of days to the next exam |
 | Local copy | `C:\Users\steve\claude-here\josie-stats` — git repo, `main` tracks `origin/main` |
@@ -88,6 +88,20 @@ Three checks were run on the research content before publishing, because a wrong
    makes this stick" became "a big part of".
 3. **Fresh code review** of the whole diff by a separate agent: 2 bugs (orphaned cloze card on an odd new-card budget; first-visit
    redirect stuck when the URL already ended in `#today`) and 9 minors, all fixed and the bugs covered by unit tests.
+
+4. **Formula review (2026-10-20, evening).** Three independent reviewers covered all 37 formulas and 30 scenarios: two on the
+   session's model against each card's cited source, one on a different model (opus) told to ignore the citations and use
+   Penn State STAT 200/414, MathWorld and Wikipedia. Consensus: no formula is mathematically wrong, every cloze reproduces its
+   formula, both "corrections to Josie's notes" are right. Fixed from their findings: five Penn State source URLs were dead
+   (site moved to Quarto; now point at the live lesson pages); binomial, geometric and moments cited pages that did not state
+   the formula (now OpenStax Appendix F and NIST 1.3.5.11); six scenarios offered a distractor that was also a correct method
+   (sc-mult-ind, sc-compl, sc-relfreq, sc-expo, sc-test, sc-lln) and two "spread" scenarios now ask for the standard deviation;
+   convention notes added for N(μ,σ) vs N(μ,σ²) (normalpdf, clt), p < α vs p ≤ α (decision), OpenStax AND/OR and EBM wording;
+   fence "when" no longer claims whiskers end at the fences; the law-of-large-numbers line no longer reads like the gambler's
+   fallacy; "disjoint"/"mutually exclusive" and "med"/"median" made consistent. Two mechanical checks now live in `test/`:
+   `node test/deck.check.mjs` (KaTeX strict render of every formula, cloze and symbol; scenario integrity) and
+   `python3 test/linkcheck.py` (every source and explainer URL must return 200 at its own address). Both pass.
+   Open convention questions for Josie's instructor: N(μ,σ) vs N(μ,σ²); exponential with rate λ vs mean; p < α vs p ≤ α.
 
 Deliberately not cited: Mueller & Oppenheimer 2014 (pen vs keyboard), because Morehead, Dunlosky & Rawson 2019 found the
 effect much weaker on replication.
