@@ -61,6 +61,17 @@ themselves (right pick = Got it, wrong = Forgot).
 - Population SD: `σ = √( Σ(x−μ)² / N )` — the notes have the N outside the root.
 - Standard error: `σ / √n` — the notes say "divided by number of samples".
 
+## Where the last session stopped (2026-10-20, late)
+
+- Live site = commit `160c010` (deck fixes from the formula review). Everything above that is published and QA'd.
+- **Local, committed, NOT pushed:** `83c7fb2` "Pad: pen and eraser tools, placeholder text on the empty canvas"
+  (`js/pad.js`, `css/style.css`). A QA agent was testing it when the session ended (partial erase, expanded mode, dark mode,
+  survival across a hint re-render). **Next session:** re-run that QA (plan: draw, switch to `[data-pad-tool="eraser"]`,
+  erase the middle of a stroke, ink drops but stays > 0; pen again; expand/collapse; dark mode; hint re-render), fix anything
+  found, then `git push`. Do not push unverified.
+- Feature requests banked from Steve today: cache-busting for module scripts (10-minute stale window after deploys);
+  ink colour re-tint on theme flip (cosmetic); Spec B diagrams; Spec C gamification; an import process for new course material.
+
 ## Review covenant (Steve, 2026-10-20)
 
 Nothing user-facing ships without independent adversarial review by separate agents, using different models and different
