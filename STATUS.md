@@ -139,6 +139,13 @@ Only Got it advances a learning step, so Partly cannot shortcut the three clean 
 - **Spec C, gamification.** Reward showing up and honest grading (streaks, sessions, formulas moved), never speed or "Easy"
   grades (Dunlosky & Rawson 2012 on overconfidence).
 
+- **Spec D, the story behind the formula (Steve, 2026-10-20).** Optional history per formula where there is a real story:
+  who, how they arrived at the insight, any drama (Gosset publishing the t-distribution as "Student" under Guinness's
+  rules; Fisher vs Neyman–Pearson on p-values; Bayes's essay published posthumously; Gauss and Legendre on least squares).
+  Not forced where nothing interesting exists. Surface as a tap-on icon on the card or an after-the-answer highlight, never
+  in the recall path. Rationale: a narrative hook is a strong retrieval cue. Every historical claim goes through the review
+  covenant (two reviewers, different models and sources) before it ships. Wait for capacity.
+
 ## Ideas not yet done
 
 - Service worker for offline use (vendor assets are local already, only the Google Font is remote).
