@@ -75,7 +75,12 @@ export function composeSession({ deck, getCard, isDue, budget, rng = Math.random
   const isNew = id => !getCard(id);
   const settled = fid => stages.get(fid) === 'graduated' || stages.get(fid) === 'solid';
 
-  const recall = deck.filter(c => c.kind !== 'scenario' && !isNew(c.id) && isDue(c.id));
+  const recallDue = deck.filter(c => c.kind !== 'scenario' && !isNew(c.id) && isDue(c.id));
+  // Cards still in learning steps come due within minutes; they belong to this session even if not due yet.
+  const inSteps = c => { const s = getCard(c.id); return s && (s.state === State.Learning || s.state === State.Relearning); };
+  const recallSoon = deck.filter(c => c.kind !== 'scenario' && !isNew(c.id) && !isDue(c.id) && inSteps(c))
+    .sort((a, b) => new Date(getCard(a.id).due) - new Date(getCard(b.id).due));
+  const recall = [...recallDue, ...recallSoon];
   const dueTell = deck.filter(c => c.kind === 'scenario' && !isNew(c.id) && isDue(c.id));
   const tellNew = deck.filter(c => c.kind === 'scenario' && isNew(c.id) && settled(c.formula.id));
   const deepenNew = deck.filter(c => DEEPEN_KINDS.has(c.kind) && isNew(c.id) && settled(c.formula.id));
@@ -115,7 +120,7 @@ export function composeSession({ deck, getCard, isDue, budget, rng = Math.random
   const meetRecall = meet.filter(c => c.kind === 'recall');
   const meetCloze = meet.filter(c => c.kind !== 'recall');
   const queue = [
-    ...shuffleWith(recall, rng),
+    ...shuffleWith(recallDue, rng), ...recallSoon,
     ...shuffleWith(meetRecall, rng),
     ...shuffleWith(meetCloze, rng),
     ...shuffleWith([...deepen, ...tell], rng),

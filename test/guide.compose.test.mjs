@@ -70,7 +70,8 @@ test('a cloze card left behind by an odd budget is introduced in a later session
   const cards = { 'a:recall': { state: State.Learning, stability: 1, due: new Date(0) } }; // a met, its cloze still new; b new
   const r = composeSession({ deck, getCard: id => cards[id] || null, isDue: () => false, budget: 1, rng });
   assert.deepEqual(phases(r, 'meet'), ['a:cloze']);
-  assert.equal(r.queue.length, 1);
+  assert.deepEqual(phases(r, 'recall'), ['a:recall']); // still in learning steps, so it stays in the session
+  assert.equal(r.queue.length, 2);
 });
 test('a cloze card already seen is not re-added by the meet pair', () => {
   const deck = [...f('a')];
@@ -79,4 +80,13 @@ test('a cloze card already seen is not re-added by the meet pair', () => {
   assert.deepEqual(phases(r, 'meet'), ['a:recall']);
   assert.deepEqual(phases(r, 'recall'), ['a:cloze']);
   assert.equal(new Set(r.queue.map(c => c.id)).size, r.queue.length);
+});
+
+test('cards in learning steps that are not yet due still belong to the session, after the due ones', () => {
+  const deck = [...f('a'), ...f('b')];
+  const learning = due => ({ state: State.Learning, stability: 1, due });
+  const cards = { 'a:recall': learning(new Date(Date.now() + 5 * 60000)), 'b:recall': { state: State.Review, stability: 9, due: new Date(0) } };
+  const r = composeSession({ deck, getCard: id => cards[id] || null, isDue: id => id === 'b:recall', budget: 0, rng });
+  assert.deepEqual(phases(r, 'recall'), ['b:recall', 'a:recall']);
+  assert.equal(r.counts.recall, 2);
 });

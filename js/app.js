@@ -226,6 +226,7 @@ const MODE_TITLE = { today: 'Today', study: 'Study', drill: 'Which formula?' };
 
 function startSession(mode = 'today') {
   session.mode = mode;
+  session.day = store.todayKey();
   session.done = 0; session.revealed = false; session.current = null;
   session.phaseOf = null; session.counts = null; session.stagesBefore = null;
   let cards;
@@ -639,6 +640,22 @@ function renderMethod() {
 
 /* ───────────────────────── routing ───────────────────────── */
 
+// Coming back to Today or Study the same day continues the session instead of rebuilding it.
+// A finished session picks up any cards that have come due since the wrap-up.
+function resumeOrStart(mode) {
+  const sameDay = session.mode === mode && session.day === store.todayKey();
+  if (!sameDay) { startSession(mode); return; }
+  if (session.current || session.queue.length) { renderStudy(); return; }
+  const queued = new Set();
+  const fresh = dueCards().filter(c => !isNew(c.id) && !queued.has(c.id));
+  if (fresh.length) {
+    session.queue.push(...fresh);
+    session.total += fresh.length;
+    if (session.phaseOf) fresh.forEach(c => { if (!session.phaseOf.has(c.id)) session.phaseOf.set(c.id, c.kind === 'scenario' ? 'tell' : 'recall'); });
+  }
+  renderStudy();
+}
+
 let route = 'today';
 function navigate() {
   let hash = (location.hash || '#today').slice(1);
@@ -650,8 +667,7 @@ function navigate() {
   document.querySelectorAll('.tabs a').forEach(a => { if (a.dataset.view === route) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   scheduler = makeScheduler(state.settings);
   dropPad();
-  if (route === 'today') startSession('today');
-  else if (route === 'study') startSession('study');
+  if (route === 'today' || route === 'study') resumeOrStart(route);
   else if (route === 'drill') startSession('drill');
   else if (route === 'sheet') renderSheet();
   else if (route === 'progress') renderProgress();
