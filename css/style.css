@@ -318,7 +318,9 @@ p { margin: 0; }
 .pad { margin-top: 12px; border: 2px dashed var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
 .pad canvas { display: block; width: 100%; touch-action: none; cursor: crosshair; }
 .pad-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 6px 6px 12px; }
-.pad-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.pad-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.btn-icon { padding: 6px 9px; min-width: 38px; }
+.btn-icon svg { display: block; }
 .pad-top { display: none; }
 .pad [data-pad-answer] { display: none; }
 .pad .btn-primary { width: auto; font-size: 15px; }
