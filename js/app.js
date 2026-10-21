@@ -612,7 +612,7 @@ function renderSettings() {
     <div class="panel">
       <div class="field"><label for="npd">New cards per day</label><span class="help">10 a day introduces the whole deck in about ${Math.ceil(DECK.length / 10)} days. Fewer if reviews start piling up.</span>
         <select id="npd">${[5, 10, 15, 20, 30].map(n => `<option value="${n}" ${s.newPerDay === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-      <div class="field"><label>Grading buttons</label><span class="help">Partly is for when you had most of it: a learning card repeats its step, a graduated card comes back sooner. Easy pushes a card out further than most memories have earned, so it is off by default.</span>
+      <div class="field"><label>Grading buttons</label><span class="help">Partly records progress without perfection: the card keeps the ground it has gained instead of starting over, and comes back sooner than after Got it. Easy pushes a card out further than most memories have earned, so it is off by default.</span>
         <div class="seg" role="group"><button data-gb="2" aria-pressed="${s.gradeButtons === 2}">Not yet / Got it</button><button data-gb="3" aria-pressed="${s.gradeButtons === 3}">+ Partly</button><button data-gb="4" aria-pressed="${s.gradeButtons === 4}">+ Easy</button></div></div>
       <div class="field"><label>Writing pad</label><span class="help">A space under each question to write your answer by finger, stylus or mouse. Writing keeps self-grading honest.</span>
         <div class="seg" role="group"><button data-pad="1" aria-pressed="${s.showPad}">Show</button><button data-pad="0" aria-pressed="${!s.showPad}">Hide</button></div></div>

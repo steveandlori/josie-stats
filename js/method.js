@@ -95,7 +95,7 @@ const STEPS = [
   { n: 1, title: 'Guess, even a rough one', body: 'Read the question and try to answer it in your head, out loud, or in the writing pad. A guess that turns out wrong is not a waste. Trying first helps the answer stick.' },
   { n: 2, title: 'Take a hint only if you are stuck', body: 'Each hint gives away a little more: what the formula computes, which symbols it uses, then its shape with a blank. Less help at the moment of recall means a stronger memory afterwards.' },
   { n: 3, title: 'Reveal it and read it aloud once', body: 'Compare the answer with what you had. Saying it out loud is a small extra push into memory.' },
-  { n: 4, title: 'Grade yourself honestly', body: 'Not yet, Partly, or Got it. Partly means you had most of it. If you used a hint the card grades itself, so you never have to decide whether a helped answer counts.' },
+  { n: 4, title: 'Grade yourself honestly', body: 'Not yet, Partly, or Got it. Partly means you made progress but did not have all of it; the card keeps what it has gained and comes back sooner. If you used a hint the card grades itself, so you never have to decide whether a helped answer counts.' },
 ];
 
 const WHY = [
@@ -133,7 +133,7 @@ const WHY = [
   {
     title: 'Honest grading',
     evidence: `Students who misjudged their own answers, usually too generously, remembered less two days later than students who judged them accurately, even after allowing for how much they practised${cite(22)}. A few grades with clear meanings remove the temptation to call a miss something better than it was.`,
-    applied: 'Not yet, Partly and Got it. Partly is for when you had most of it: while a card is still learning it repeats the step instead of advancing, so it can never shortcut the three clean recalls; once graduated it simply brings the card back sooner. When you used a hint, the card grades itself Partly or Not yet.',
+    applied: 'Not yet, Partly and Got it. Partly records progress without perfection: the card keeps the ground it has gained instead of starting over, and comes back a little sooner than a full recall would. Only Got it counts toward the three clean recalls a card needs to graduate. When you used a hint, the card grades itself Partly or Not yet.',
   },
   {
     title: 'A picture where it helps',
