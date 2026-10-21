@@ -61,6 +61,14 @@ themselves (right pick = Got it, wrong = Forgot).
 - Population SD: `σ = √( Σ(x−μ)² / N )` — the notes have the N outside the root.
 - Standard error: `σ / √n` — the notes say "divided by number of samples".
 
+## Review covenant (Steve, 2026-10-20)
+
+Nothing user-facing ships without independent adversarial review by separate agents, using different models and different
+sources: one reviewer against the sources the content cites, one on another model told to ignore those and use independent
+references (Penn State STAT 200/414, MathWorld, Wikipedia, Khan). Findings are labelled VERIFIED / QUESTIONABLE / UNVERIFIED
+and every confirmed finding is fixed before push. Nothing inherited from an earlier session counts as verified until re-checked.
+Code gets a fresh-agent review plus a QA agent with a written test plan.
+
 ## Content review (2026-10-20)
 
 Three checks were run on the research content before publishing, because a wrong claim misleads the student.
