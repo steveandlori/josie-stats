@@ -61,7 +61,26 @@ themselves (right pick = Got it, wrong = Forgot).
 - Population SD: `σ = √( Σ(x−μ)² / N )` — the notes have the N outside the root.
 - Standard error: `σ / √n` — the notes say "divided by number of samples".
 
-## Where the last session stopped (2026-10-20, late)
+## Where the last session stopped (2026-10-23)
+
+- Live site = `f5b6354` (Meet stars). Everything is pushed. Two items ported from Hebrew by Book's handoff
+  (`docs/handoff/from-hebrew-by-book-2026-10-23.md`):
+  - **Pad vector ink** (`111a2c9`): ink kept as paths and redrawn per surface, so full-screen round trips no longer shrink
+    it. QA 11/11. This also re-tints ink on any resize; "expanded ink shrinks on collapse" is still by design.
+  - **Meet stars + scenario sparks** (`f5b6354`), the first slice of Spec C. Five stars mark fifths of the Meet work in
+    clean recalls (`meetStep`/`meetStars`, three per new card); a star once earned stays; "N picks right in a row" sparks only
+    on app-graded scenario cards, never on self-graded ones. Steve decided the honest-grading question in the Hebrew app:
+    stars are milestones, not rewards for being right (a reviewer raised it again; not re-litigated). Additions beyond the
+    Hebrew version: `state.meetDay` + `carryMeet` keep stars across a reload, a Which formula? detour or a same-day import;
+    Today rebuilds after Start over/import; `#announce` live region with plain words; forced-colors rule; a test ties
+    `CLEAN_RECALLS` to the scheduler's learning steps. Two Opus reviews, three Sonnet QA passes, all green.
+  - Accepted cosmetics: a one-card Meet goes 1, 3, 5 stars; after a rebuild the chip can show a star one card before its
+    burst; the "now" chip can flip Meet/Recall when today's still-learning Meet cards are re-filed; a later rebuild that adds
+    Meet cards after 5 stars keeps 5.
+- QA agents must stop only their own server by PID (one killed every python.exe on 2026-10-23).
+- Bugs/feedback found here that also apply to Hebrew by Book go in a note in that repo's `docs/handoff/` (Steve, 2026-10-23).
+
+## Earlier stop (2026-10-20, late)
 
 - Live site = the pad pen/eraser commit (QA'd: ship, 0 errors). Everything is pushed; working tree clean.
 - Banked observations from the eraser QA (none blocking): strokes drawn in expanded mode shrink to fit when collapsed, so a
@@ -137,7 +156,8 @@ Only Got it advances a learning step, so Partly cannot shortcut the three clean 
 - **Spec B, inline diagrams** for formulas whose picture is the concept (z-score area, SE narrowing with n, variance as
   squares, binomial bars). Independent of Spec A.
 - **Spec C, gamification.** Reward showing up and honest grading (streaks, sessions, formulas moved), never speed or "Easy"
-  grades (Dunlosky & Rawson 2012 on overconfidence).
+  grades (Dunlosky & Rawson 2012 on overconfidence). Meet stars and scenario sparks shipped 2026-10-23 as the first slice; streaks and
+  sessions remain.
 
 - **Spec D, the story behind the formula (Steve, 2026-10-20).** Optional history per formula where there is a real story:
   who, how they arrived at the insight, any drama (Gosset publishing the t-distribution as "Student" under Guinness's
