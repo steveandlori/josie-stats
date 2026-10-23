@@ -128,6 +128,42 @@ export function composeSession({ deck, getCard, isDue, budget, rng = Math.random
   return { queue, phaseOf, counts: { recall: recall.length, meet: meet.length, deepen: deepen.length, tell: tell.length } };
 }
 
+/* ───────────────────────── Meet stars ───────────────────────── */
+
+// A new card leaves the session after this many clean recalls (the scheduler's three learning steps).
+export const CLEAN_RECALLS = 3;
+
+// One Meet card's progress after a grade: Got it or Easy moves it a step, Not yet sends it back to the start
+// (as the scheduler does), Partly holds it; a card that has left its learning steps is complete.
+export function meetStep(prev, rating, graduated) {
+  if (graduated) return CLEAN_RECALLS;
+  if (rating <= 1) return 0;
+  return rating >= 3 ? Math.min(prev + 1, CLEAN_RECALLS - 1) : prev;
+}
+
+// Stars (0-5) for the Meet stretch, counted in clean recalls rather than finished cards: cards finish
+// together near the end of Meet, so counting finished cards would bunch the stars there (learned in
+// Hebrew by Book, 2026-10-23).
+export function meetStars(steps, totalCards) {
+  if (!totalCards) return 0;
+  let done = 0;
+  for (const s of steps) done += s;
+  return Math.min(5, Math.floor(5 * done / (CLEAN_RECALLS * totalCards)));
+}
+
+// Today's Meet progress, kept in stored state so a rebuilt session (a reload, or a visit to Which formula?)
+// keeps the stars already earned. Cards met earlier today that are still in learning come back from the
+// composer filed under Recall; they are put back under Meet, which is where their stars are counted.
+export function carryMeet(saved, day, phaseOf) {
+  const fresh = [...phaseOf].filter(([, p]) => p === 'meet').map(([id]) => id);
+  if (!saved || saved.day !== day) return { day, ids: fresh, steps: {}, stars: 0 };
+  for (const id of saved.ids) if (phaseOf.has(id)) phaseOf.set(id, 'meet');
+  // A saved card that was never graded and is no longer queued (a smaller rebuild left it out) is dropped,
+  // or it would hold the stars short of 5.
+  const kept = saved.ids.filter(id => id in saved.steps || phaseOf.has(id));
+  return { day, ids: [...new Set([...kept, ...fresh])], steps: { ...saved.steps }, stars: saved.stars || 0 };
+}
+
 /* ───────────────────────── hint ladder, nudges, grading ───────────────────────── */
 
 // Hints reveal the answer gradually (Finn & Metcalfe 2010). Each entry is data; the app renders it.

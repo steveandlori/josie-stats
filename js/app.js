@@ -1,7 +1,7 @@
 import { FORMULAS, SCENARIOS, TOPICS } from './cards.js';
 import * as store from './store.js';
 import { makeScheduler, hydrate, dehydrate, emptyCard, grade, Rating, State, retrievability, nextExam, maxIntervalFor, daysUntil } from './scheduler.js';
-import { STAGES, STAGE_LABEL, PHASE_LABEL, stagesByFormula, countStages, stageDiff, composeSession, hintLadder, autoRating, revealLine, nudgeFor, buildSnapshot, pruneSnapshots } from './guide.js';
+import { STAGES, STAGE_LABEL, PHASE_LABEL, stagesByFormula, countStages, stageDiff, composeSession, hintLadder, autoRating, revealLine, nudgeFor, buildSnapshot, pruneSnapshots, meetStep, meetStars, carryMeet } from './guide.js';
 import { createPad } from './pad.js';
 import { methodHTML } from './method.js';
 
@@ -219,7 +219,10 @@ const session = {
   shown: 0,          // cards shown this session; drives the nudge rotation
   phaseOf: null,     // Map cardId -> phase (Today only)
   counts: null,      // cards per phase at session start (Today only)
-  stagesBefore: null // formula stages at session start (Today only), for the wrap-up
+  stagesBefore: null, // formula stages at session start (Today only), for the wrap-up
+  meetStars: 0,      // stars earned so far in Meet (never taken back)
+  meetSteps: new Map(), // Meet card id -> clean recalls so far (0-3)
+  whichStreak: 0     // app-graded scenario picks right in a row
 };
 
 const MODE_TITLE = { today: 'Today', drill: 'Which formula?' };
@@ -229,12 +232,19 @@ function startSession(mode = 'today') {
   session.day = store.todayKey();
   session.done = 0; session.revealed = false; session.current = null;
   session.phaseOf = null; session.counts = null; session.stagesBefore = null;
+  session.meetStars = 0; session.meetSteps = new Map(); session.whichStreak = 0;
   let cards;
   if (mode === 'drill') {
     cards = shuffle(DECK.filter(c => c.kind === 'scenario'));
   } else {
     const r = composeSession({ deck: DECK, getCard: cardState, isDue: id => isDue(id), budget: newAllowance() });
-    cards = r.queue; session.phaseOf = r.phaseOf; session.counts = r.counts;
+    cards = r.queue; session.phaseOf = r.phaseOf;
+    const meet = carryMeet(state.meetDay, session.day, r.phaseOf);
+    state.meetDay = meet;
+    session.meetSteps = new Map(Object.entries(meet.steps)); session.meetStars = meet.stars;
+    session.counts = { recall: 0, meet: 0, deepen: 0, tell: 0 };
+    for (const p of r.phaseOf.values()) session.counts[p]++;
+    session.counts.meet = meet.ids.length;
     session.stagesBefore = stagesByFormula(DECK, cardState);
   }
   session.queue = cards;
@@ -281,12 +291,46 @@ function onGrade(rating) {
   const updated = applyGrade(card, rating, session.hints);
   session.done++;
   // Cards still in learning come back later in this same session.
-  if (updated.state === State.Learning || updated.state === State.Relearning) {
+  const inSteps = updated.state === State.Learning || updated.state === State.Relearning;
+  if (session.phaseOf && session.phaseOf.get(card.id) === 'meet') {
+    const step = meetStep(session.meetSteps.get(card.id) || 0, rating, !inSteps);
+    session.meetSteps.set(card.id, step);
+    if (state.meetDay) state.meetDay.steps[card.id] = step;
+  }
+  if (inSteps) {
     const pos = Math.min(session.queue.length, 3 + Math.floor(Math.random() * 3));
     session.queue.splice(pos, 0, card);
     session.total++;
   }
   nextCard();
+  const stars = meetStarsNow();
+  if (stars > session.meetStars) {
+    session.meetStars = stars;
+    if (state.meetDay) state.meetDay.stars = stars;
+    celebrate(stars >= 5 ? 'Meet complete ★★★★★' : `Meet: ${stars} of 5 ★`, stars >= 5 ? 'Meet complete: all 5 stars' : `Meet: ${stars} of 5 stars`, stars >= 5 ? 'full' : '');
+  }
+  persist();
+}
+
+// Meet is the long stretch of a day, so it is marked in fifths, like milestones on a run: a star for each
+// fifth of the clean recalls its cards need (three each). A star once earned stays, even if a Not yet sets
+// a card back, so honest grading never costs a star.
+function meetStarsNow() {
+  return Math.max(session.meetStars, meetStars(session.meetSteps.values(), session.counts ? session.counts.meet : 0));
+}
+const starsHTML = n => `<span class="stars" role="img" aria-label="${n} of 5 stars">${[0, 1, 2, 3, 4].map(i => `<i class="${i < n ? 'on' : ''}">★</i>`).join('')}</span>`;
+
+// A star (or a smaller spark) floats up in the middle of the screen and fades. Screen readers get the
+// plain words through a live region instead, so they never read out a row of star glyphs.
+function celebrate(text, spoken, cls = '') {
+  const el = document.createElement('div');
+  el.className = `burst ${cls}`.trim();
+  el.setAttribute('aria-hidden', 'true');
+  const live = $('#announce');
+  if (live) { live.textContent = ''; setTimeout(() => { live.textContent = spoken; }, 50); }
+  el.innerHTML = `<span class="burst-star" aria-hidden="true">${cls === 'spark' ? '✦' : '★'}</span><span class="burst-text">${esc(text)}</span>`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
 }
 
 function phaseStripHTML() {
@@ -296,7 +340,7 @@ function phaseStripHTML() {
   for (const c of pending) { const p = session.phaseOf.get(c.id); if (p) left[p]++; }
   const cur = session.current && session.phaseOf.get(session.current.id);
   return `<div class="phases" aria-label="Today's phases">${Object.keys(PHASE_LABEL).filter(p => session.counts[p] > 0).map(p =>
-    `<span class="ph${left[p] ? '' : ' is-done'}${cur === p ? ' now' : ''}">${PHASE_LABEL[p]}<b>${left[p]}</b></span>`).join('')}</div>`;
+    `<span class="ph${left[p] ? '' : ' is-done'}${cur === p ? ' now' : ''}">${PHASE_LABEL[p]}<b>${left[p]}<span class="sr-only"> left,</span></b>${p === 'meet' ? starsHTML(meetStarsNow()) : ''}</span>`).join('')}</div>`;
 }
 
 // Short plain-text version of the question for the expanded writing pad's top bar.
@@ -448,7 +492,11 @@ function renderStudy() {
       if (session.revealed) return;
       session.picked = b.dataset.pick;
       session.revealed = true;
-      renderStudy(); // a right pick counts as "Got it", a wrong pick as "Forgot"
+      const right = session.picked === card.scenario.answer;
+      session.whichStreak = right ? session.whichStreak + 1 : 0;
+      renderStudy(); // a right pick counts as "Got it", a wrong pick as "Not yet"
+      // Scenario cards are graded by the app, not by you, so a run of right picks can earn a spark honestly.
+      if (right && session.whichStreak >= 3 && session.whichStreak % 3 === 0) celebrate(`${session.whichStreak} picks right in a row`, `${session.whichStreak} picks right in a row`, 'spark');
     };
   });
 }
@@ -464,7 +512,8 @@ function renderWrapUp() {
   const next = DECK.filter(c => !isNew(c.id)).map(c => cardState(c.id).due).sort((a, b) => a - b)[0];
   const names = ids => ids.length ? `<ul class="moved">${ids.map(id => `<li>${esc(byId[id].name)}</li>`).join('')}</ul>` : '';
   const tile = (n, label, ids) => `<div class="stat"><b>${n}</b><span>${label}</span>${names(ids)}</div>`;
-  view.innerHTML = `<div class="card done"><h2>Session done</h2><div class="big">${session.done}</div><p class="muted">cards answered</p>
+  const meetLine = session.counts && session.counts.meet ? `<p class="meet-stars">${meetStarsNow() >= 5 ? 'Meet: all 5 stars' : 'Meet'} ${starsHTML(meetStarsNow())}</p>` : '';
+  view.innerHTML = `<div class="card done"><h2>Session done</h2><div class="big">${session.done}</div><p class="muted">cards answered</p>${meetLine}
     <div class="stats moved-stats">${tile(diff.met.length, diff.met.length === 1 ? 'formula met' : 'formulas met', diff.met)}${tile(diff.graduated.length, 'graduated', diff.graduated)}${tile(diff.solid.length, 'now solid', diff.solid)}</div>
     <div class="pipeline-wrap">${pipelineHTML(countStages(after))}</div>
     <p style="margin-top:14px">${next ? `Next cards come due ${fmtDue(next)}.` : ''} Coming back tomorrow matters more than doing more today. Spacing is a big part of what makes this stick.</p>
@@ -636,11 +685,11 @@ function renderSettings() {
   };
   $('#import').onchange = async e => {
     const file = e.target.files[0]; if (!file) return;
-    try { state = store.importState(await file.text()); scheduler = makeScheduler(state.settings); persist(); toast('Progress imported'); renderSettings(); }
+    try { state = store.importState(await file.text()); scheduler = makeScheduler(state.settings); session.day = null; persist(); toast('Progress imported'); renderSettings(); }
     catch (err) { toast(err.message || 'Could not read that file'); }
   };
   $('#reset').onclick = () => {
-    if (confirm('Erase all progress on this device? Export first if you want a backup.')) { state = store.resetState(); scheduler = makeScheduler(state.settings); toast('Progress cleared'); renderSettings(); }
+    if (confirm('Erase all progress on this device? Export first if you want a backup.')) { state = store.resetState(); scheduler = makeScheduler(state.settings); session.day = null; toast('Progress cleared'); renderSettings(); }
   };
 }
 

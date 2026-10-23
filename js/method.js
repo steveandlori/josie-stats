@@ -133,7 +133,7 @@ const WHY = [
   {
     title: 'Honest grading',
     evidence: `Students who misjudged their own answers, usually too generously, remembered less two days later than students who judged them accurately, even after allowing for how much they practised${cite(22)}. A few grades with clear meanings remove the temptation to call a miss something better than it was.`,
-    applied: 'Not yet, Partly and Got it. Partly records progress without perfection: the card keeps the ground it has gained instead of starting over, and comes back a little sooner than a full recall would. Only Got it counts toward the three clean recalls a card needs to graduate. When you used a hint, the card grades itself Partly or Not yet.',
+    applied: 'Not yet, Partly and Got it. Partly records progress without perfection: the card keeps the ground it has gained instead of starting over, and comes back a little sooner than a full recall would. Only Got it counts toward the three clean recalls a new card needs to graduate. When you used a hint, the card grades itself Partly or Not yet. While you meet new formulas, a star marks each fifth of the work they need today. A star once earned stays, so an honest Not yet never costs you one.',
   },
   {
     title: 'A picture where it helps',

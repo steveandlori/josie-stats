@@ -19,6 +19,8 @@
   --bad: #C2372B;
   --bad-soft: #FBE3DF;
   --hard: #9A6700;
+  --gold: #E8A90C;
+  --gold-edge: #9A6700;
   --hard-soft: #FFF2CC;
   --easy: #0B6E8E;
   --easy-soft: #DDF1F8;
@@ -52,6 +54,8 @@
     --bad: #FF8A7A;
     --bad-soft: #442020;
     --hard: #F4C861;
+    --gold: #F7C948;
+    --gold-edge: #B98A1F;
     --hard-soft: #3E3011;
     --easy: #7FD0EC;
     --easy-soft: #11303B;
@@ -83,6 +87,8 @@
     --bad: #FF8A7A;
     --bad-soft: #442020;
     --hard: #F4C861;
+    --gold: #F7C948;
+    --gold-edge: #B98A1F;
     --hard-soft: #3E3011;
     --easy: #7FD0EC;
     --easy-soft: #11303B;
@@ -418,3 +424,28 @@ body.pad-open { overflow: hidden; }
 .curve .dot { fill: var(--pen); stroke: var(--card); stroke-width: 2; }
 .sr-only { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 420px) { .stage-flow div { grid-template-columns: 1fr; gap: 2px; } }
+
+/* Meet stars and the floating milestone burst */
+.stars { display: inline-flex; gap: 1px; margin-left: 2px; font-size: 12px; }
+.stars i { font-style: normal; color: transparent; -webkit-text-stroke: .8px var(--ink-3); }
+.stars i.on { color: var(--gold); -webkit-text-stroke: .8px var(--gold-edge); }
+.meet-stars { margin-top: 8px; font-weight: 700; color: var(--ink-2); }
+.meet-stars .stars { font-size: 22px; vertical-align: -2px; }
+.burst { position: fixed; left: 50%; top: 42%; z-index: 60; display: flex; flex-direction: column; align-items: center;
+  pointer-events: none; transform: translate(-50%, -50%); animation: burst 1.8s ease-out forwards; }
+.burst-star { font-size: 84px; line-height: 1; color: var(--gold); -webkit-text-stroke: 2px var(--gold-edge); text-shadow: 0 6px 22px rgba(232, 169, 12, .45); }
+.burst-text { margin-top: 6px; font-weight: 700; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 14px; box-shadow: var(--shadow); white-space: nowrap; }
+.burst.full .burst-star { font-size: 110px; }
+.burst.spark .burst-star { font-size: 48px; color: var(--easy); text-shadow: none; }
+.burst.spark { top: 30%; }
+@keyframes burst {
+  0% { opacity: 0; transform: translate(-50%, -35%) scale(.5); }
+  18% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+  30% { transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 1; transform: translate(-50%, -58%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -72%) scale(1); }
+}
+@keyframes burst-fade { 0%, 100% { opacity: 0; } 15%, 80% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .burst { animation: burst-fade 1.8s linear forwards; } }
+@media (forced-colors: active) { .stars i { color: CanvasText; -webkit-text-stroke: 0; } .stars i:not(.on) { opacity: .3; } }

@@ -37,6 +37,7 @@ export function loadState() {
     newIntroduced: s.newIntroduced || {}, // dayKey -> [cardIds]
     sessions: s.sessions || {},    // dayKey -> count of reviews
     snapshots: s.snapshots || {},  // dayKey -> {stages, avgInterval}, written at wrap-up
+    meetDay: s.meetDay || null,    // today's Meet progress {day, ids, steps, stars}, so stars survive a reload
   };
 }
 
@@ -59,6 +60,7 @@ export function importState(text) {
     newIntroduced: s.newIntroduced || {},
     sessions: s.sessions || {},
     snapshots: s.snapshots || {},
+    meetDay: s.meetDay || null,
   };
 }
 

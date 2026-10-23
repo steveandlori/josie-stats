@@ -25,3 +25,9 @@ test('an export with the old fourButtons flag imports as four grade buttons', ()
   const t = importState(JSON.stringify({ app: 'josie-stats', settings: { fourButtons: false } }));
   assert.equal(t.settings.gradeButtons, 3);
 });
+test("an export's Meet progress comes back on import", () => {
+  const meetDay = { day: '2026-10-23', ids: ['mean:recall'], steps: { 'mean:recall': 2 }, stars: 2 };
+  const s = importState(JSON.stringify({ app: 'josie-stats', version: 1, settings: {}, cards: {}, meetDay }));
+  assert.deepEqual(s.meetDay, meetDay);
+  assert.equal(importState(JSON.stringify({ app: 'josie-stats', version: 1 })).meetDay, null);
+});
