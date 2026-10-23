@@ -215,7 +215,7 @@ const session = {
   queue: [], done: 0, total: 0, mode: 'today', revealed: false, current: null, choices: null, picked: null,
   hints: 0,          // hints taken on the current card
   pad: null,         // live scratchpad component, if shown
-  sketch: null,      // data URL of the learner's drawing, kept across re-renders and shown at reveal
+  sketch: null,      // { url, ink } of the learner's drawing: ink restores the pad after a hint, url shows at reveal
   shown: 0,          // cards shown this session; drives the nudge rotation
   phaseOf: null,     // Map cardId -> phase (Today only)
   counts: null,      // cards per phase at session start (Today only)
@@ -388,7 +388,7 @@ function renderStudy() {
     if (line) top += `<p class="reveal-line">${esc(line)}</p>`;
     let compare = '';
     if (session.sketch) {
-      compare = `<div class="compare"><figure><figcaption>Your answer</figcaption><img src="${session.sketch}" alt="Your handwritten answer"></figure><figure><figcaption>The formula</figcaption>${texLines(f.latex, 'math math-lg')}</figure></div>`;
+      compare = `<div class="compare"><figure><figcaption>Your answer</figcaption><img src="${session.sketch.url}" alt="Your handwritten answer"></figure><figure><figcaption>The formula</figcaption>${texLines(f.latex, 'math math-lg')}</figure></div>`;
     }
     body += `<div class="answer">${top}${compare}${backHTML(card, { omitFormula: !!session.sketch })}</div>`;
 
@@ -421,12 +421,12 @@ function renderStudy() {
   view.innerHTML = body;
   fitMath(view);
 
-  const captureSketch = () => { if (session.pad) { session.sketch = session.pad.toDataURL(); dropPad(); } };
+  const captureSketch = () => { if (session.pad) { session.sketch = session.pad.hasInk() ? { url: session.pad.toDataURL(), ink: session.pad.snapshot() } : null; dropPad(); } };
   const doReveal = () => { captureSketch(); session.revealed = true; renderStudy(); };
   const host = $('#padhost');
   if (host) {
     session.pad = createPad(host, { title: padTitle(card), onAnswer: doReveal });
-    if (session.sketch) session.pad.restore(session.sketch);
+    if (session.sketch) session.pad.restore(session.sketch.ink);
   }
 
   const reveal = $('#reveal');

@@ -15,16 +15,21 @@ export function createPad(container, { height = 150, title = '', onAnswer = null
   pad.querySelector('.pad-title').textContent = title;
   if (!onAnswer) pad.querySelector('[data-pad-answer]').remove();
 
-  let strokes = 0;
-  let drawing = false;
-  let last = null;
+  // Ink is kept as vector paths in "frame" coordinates: the size of the largest surface written on at
+  // full size. Every resize redraws from the paths, scaled to fit, so shrinking for the small pad and
+  // growing back for the big one never compounds: the big pad always shows the ink at 100%.
+  let paths = [];                // [{ tool, pts: [[x, y], ...] }] in frame coordinates
+  let frame = null;              // { w, h } or null before the first stroke
+  let scale = 1;                 // CSS px per frame unit on the current surface (never above 1)
+  let current = null;
   let cssW = 0, cssH = 0;        // current drawing surface size in CSS px
-  let lastGood = null;           // { url, w, h } taken before a resize, so a second resize cannot snapshot a cleared canvas
   let expanded = false;
   let tool = 'pen';
-  const ERASER_WIDTH = 22;
+  const PEN_WIDTH = 2.5, ERASER_WIDTH = 22;
 
   const ink = () => (getComputedStyle(document.documentElement).getPropertyValue('--ink') || '#16213A').trim();
+  const strokes = () => paths.filter(p => p.tool === 'pen').length;
+  const fitScale = () => (frame ? Math.min(cssW / frame.w, cssH / frame.h, 1) || 1 : 1);
 
   function size(keep) {
     const dpr = window.devicePixelRatio || 1;
@@ -32,23 +37,37 @@ export function createPad(container, { height = 150, title = '', onAnswer = null
     const w = Math.max(1, canvas.clientWidth || container.clientWidth);
     const h = Math.max(1, expanded ? canvas.clientHeight : height);
     if (keep && w === cssW && h === cssH) return;
-    const snapshot = keep && strokes ? (lastGood || { url: canvas.toDataURL(), w: cssW, h: cssH }) : null;
-    if (snapshot) lastGood = snapshot;
     cssW = w; cssH = h;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 2.5; ctx.strokeStyle = ink();
-    if (snapshot) restore(snapshot, () => { lastGood = null; });
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    scale = fitScale();
+    redraw();
+  }
+
+  function stylePath(t) {
+    if (t === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = ERASER_WIDTH * scale; }
+    else { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = PEN_WIDTH * scale; ctx.strokeStyle = ink(); }
+  }
+  function drawPath(p) {
+    stylePath(p.tool);
+    const [x0, y0] = p.pts[0];
+    ctx.beginPath(); ctx.moveTo(x0 * scale, y0 * scale);
+    if (p.pts.length === 1) ctx.lineTo(x0 * scale + 0.01, y0 * scale);
+    for (const [x, y] of p.pts.slice(1)) ctx.lineTo(x * scale, y * scale);
+    ctx.stroke();
+  }
+  function redraw() {
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.restore();
+    paths.forEach(drawPath);
+    ctx.globalCompositeOperation = 'source-over';
+    pad.classList.toggle('has-ink', strokes() > 0);
   }
 
   function pos(e) {
     const r = canvas.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
-  }
-  function applyTool() {
-    if (tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = ERASER_WIDTH; }
-    else { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = 2.5; ctx.strokeStyle = ink(); }
+    return [(e.clientX - r.left) / scale, (e.clientY - r.top) / scale];
   }
   function setTool(t) {
     tool = t;
@@ -57,39 +76,35 @@ export function createPad(container, { height = 150, title = '', onAnswer = null
   }
   function down(e) {
     if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
-    drawing = true; last = pos(e);
+    // Writing at full size on a surface bigger than the frame grows the frame to that surface.
+    if (scale === 1) frame = { w: Math.max(frame ? frame.w : 0, cssW), h: Math.max(frame ? frame.h : 0, cssH) };
+    current = { tool, pts: [pos(e)] };
+    paths.push(current);
     canvas.setPointerCapture?.(e.pointerId);
-    applyTool();
-    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(last.x + 0.01, last.y); ctx.stroke();
-    if (tool === 'pen') { strokes++; pad.classList.add('has-ink'); }
+    drawPath(current);
+    if (tool === 'pen') pad.classList.add('has-ink');
     e.preventDefault();
   }
   function move(e) {
-    if (!drawing) return;
+    if (!current) return;
+    const [lx, ly] = current.pts[current.pts.length - 1];
     const p = pos(e);
-    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-    last = p;
+    current.pts.push(p);
+    stylePath(current.tool);
+    ctx.beginPath(); ctx.moveTo(lx * scale, ly * scale); ctx.lineTo(p[0] * scale, p[1] * scale); ctx.stroke();
     e.preventDefault();
   }
-  function up() { drawing = false; last = null; lastGood = null; }
+  function up() { current = null; ctx.globalCompositeOperation = 'source-over'; }
 
-  function clear() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes = 0; lastGood = null; pad.classList.remove('has-ink'); }
+  function clear() { paths = []; frame = null; current = null; scale = 1; redraw(); }
 
-  // Draws a saved image scaled to fit the current surface (width-first, never cropped).
-  function restore(snap, done) {
-    const s = typeof snap === 'string' ? { url: snap, w: cssW, h: cssH } : snap;
-    if (!s || !s.url) return;
-    const img = new Image();
-    img.onload = () => {
-      const sw = s.w || img.width, sh = s.h || img.height;
-      const k = Math.min(cssW / sw, cssH / sh, 1) || 1;
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.drawImage(img, 0, 0, sw * k, sh * k);
-      strokes = Math.max(strokes, 1);
-      pad.classList.add('has-ink');
-      if (done) done();
-    };
-    img.src = s.url;
+  // Puts back ink saved with snapshot() (e.g. after a hint re-renders the card).
+  function restore(snap) {
+    if (!snap || !snap.paths) return;
+    paths = snap.paths.map(p => ({ tool: p.tool, pts: p.pts.map(q => [...q]) }));
+    frame = snap.frame ? { ...snap.frame } : null;
+    scale = fitScale();
+    redraw();
   }
 
   function expand() {
@@ -126,7 +141,7 @@ export function createPad(container, { height = 150, title = '', onAnswer = null
   size(false);
 
   return {
-    hasInk: () => strokes > 0,
+    hasInk: () => strokes() > 0,
     clear,
     restore,
     expand,
@@ -134,7 +149,8 @@ export function createPad(container, { height = 150, title = '', onAnswer = null
     isExpanded: () => expanded,
     setTool,
     tool: () => tool,
-    toDataURL: () => (strokes > 0 ? canvas.toDataURL('image/png') : null),
+    snapshot: () => ({ paths: paths.map(p => ({ tool: p.tool, pts: p.pts.map(q => [...q]) })), frame: frame && { ...frame } }),
+    toDataURL: () => (strokes() > 0 ? canvas.toDataURL('image/png') : null),
     destroy: () => {
       window.removeEventListener('resize', onResize);
       document.removeEventListener('keydown', onKey);
